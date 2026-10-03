@@ -3,10 +3,11 @@
 import { AlertTriangle } from "lucide-react";
 import TopBar from "@/components/TopBar";
 import StatusBadge from "@/components/StatusBadge";
-import { inventoryItems } from "@/lib/mock-data";
+import { useInventory } from "@/lib/inventory-context";
 
 export default function LowStockPage() {
-  const lowStockItems = inventoryItems.filter(
+  const { items } = useInventory();
+  const lowStockItems = items.filter(
     (item) => item.status === "Low Stock" || item.status === "Out of Stock"
   );
 

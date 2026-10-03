@@ -1,6 +1,6 @@
 import { InventoryItem, StockStatus } from "./types";
 
-function computeStatus(quantity: number, minThreshold: number): StockStatus {
+export function computeStatus(quantity: number, minThreshold: number): StockStatus {
   if (quantity <= 0) return "Out of Stock";
   if (quantity <= minThreshold) return "Low Stock";
   return "In Stock";

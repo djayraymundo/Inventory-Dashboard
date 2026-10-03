@@ -11,16 +11,12 @@ import {
   Settings,
   Warehouse,
 } from "lucide-react";
-import { inventoryItems } from "@/lib/mock-data";
-
-const lowStockCount = inventoryItems.filter(
-  (item) => item.status === "Low Stock" || item.status === "Out of Stock"
-).length;
+import { useInventory } from "@/lib/inventory-context";
 
 const navItems = [
   { name: "Dashboard", href: "/", icon: LayoutDashboard },
   { name: "Inventory", href: "/inventory", icon: Boxes },
-  { name: "Low Stock", href: "/low-stock", icon: AlertTriangle, badge: lowStockCount },
+  { name: "Low Stock", href: "/low-stock", icon: AlertTriangle, badge: "lowStock" as const },
   { name: "Incoming/Outgoing", href: "/incoming-outgoing", icon: ArrowLeftRight },
   { name: "Reports", href: "/reports", icon: FileBarChart2 },
   { name: "Settings", href: "/settings", icon: Settings },
@@ -28,6 +24,10 @@ const navItems = [
 
 export default function Sidebar() {
   const pathname = usePathname();
+  const { items } = useInventory();
+  const lowStockCount = items.filter(
+    (item) => item.status === "Low Stock" || item.status === "Out of Stock"
+  ).length;
 
   return (
     <aside className="fixed inset-y-0 left-0 z-40 hidden w-64 flex-col bg-slate-900 lg:flex">
@@ -46,6 +46,7 @@ export default function Sidebar() {
           const isActive =
             item.href === "/" ? pathname === "/" : pathname.startsWith(item.href);
           const Icon = item.icon;
+          const badge = item.badge === "lowStock" ? lowStockCount : 0;
           return (
             <Link
               key={item.name}
@@ -60,9 +61,9 @@ export default function Sidebar() {
                 <Icon className="h-4 w-4" />
                 {item.name}
               </span>
-              {!!item.badge && (
+              {!!badge && (
                 <span className="flex h-5 min-w-5 items-center justify-center rounded-full bg-red-500 px-1 text-[11px] font-semibold text-white">
-                  {item.badge}
+                  {badge}
                 </span>
               )}
             </Link>

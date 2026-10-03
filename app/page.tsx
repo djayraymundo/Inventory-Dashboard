@@ -8,14 +8,13 @@ import FilterBar, { Filters, emptyFilters } from "@/components/FilterBar";
 import InventoryTable from "@/components/InventoryTable";
 import Pagination from "@/components/Pagination";
 import DetailPanel from "@/components/DetailPanel";
-import { inventoryItems as initialItems } from "@/lib/mock-data";
-import { InventoryItem } from "@/lib/types";
+import { useInventory } from "@/lib/inventory-context";
 
 const PAGE_SIZE = 8;
 const STATUSES = ["In Stock", "Low Stock", "Out of Stock"];
 
 export default function DashboardPage() {
-  const [items, setItems] = useState<InventoryItem[]>(initialItems);
+  const { items, updateQuantity, addNote } = useInventory();
   const [search, setSearch] = useState("");
   const [filters, setFilters] = useState<Filters>(emptyFilters);
   const [page, setPage] = useState(1);
@@ -96,54 +95,6 @@ export default function DashboardPage() {
     );
   }
 
-  function handleUpdateQuantity(id: string, quantity: number) {
-    setItems((prev) =>
-      prev.map((item) => {
-        if (item.id !== id) return item;
-        const status =
-          quantity <= 0 ? "Out of Stock" : quantity <= item.minThreshold ? "Low Stock" : "In Stock";
-        return {
-          ...item,
-          quantity,
-          status,
-          lastUpdated: new Date().toISOString().slice(0, 10),
-          history: [
-            {
-              id: `${id}-${Date.now()}`,
-              type: "Adjusted",
-              description: `Quantity updated to ${quantity} ${item.unit}`,
-              date: new Date().toISOString().slice(0, 10),
-              user: "You",
-            },
-            ...item.history,
-          ],
-        };
-      })
-    );
-  }
-
-  function handleAddNote(id: string, note: string) {
-    setItems((prev) =>
-      prev.map((item) =>
-        item.id === id
-          ? {
-              ...item,
-              history: [
-                {
-                  id: `${id}-${Date.now()}`,
-                  type: "Note",
-                  description: note,
-                  date: new Date().toISOString().slice(0, 10),
-                  user: "You",
-                },
-                ...item.history,
-              ],
-            }
-          : item
-      )
-    );
-  }
-
   return (
     <>
       <TopBar onSearch={handleSearch} />
@@ -216,8 +167,8 @@ export default function DashboardPage() {
       <DetailPanel
         item={selectedItem}
         onClose={() => setSelectedItemId(null)}
-        onUpdateQuantity={handleUpdateQuantity}
-        onAddNote={handleAddNote}
+        onUpdateQuantity={updateQuantity}
+        onAddNote={addNote}
       />
     </>
   );
