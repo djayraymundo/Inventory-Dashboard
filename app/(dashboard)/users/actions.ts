@@ -59,6 +59,32 @@ export async function createUser(
   return { success: `Nagawa na ang account ni ${fullName}. Pwede na siyang mag-login gamit ang ${email}.` };
 }
 
+export async function resetUserPassword(
+  _prev: CreateUserState,
+  formData: FormData
+): Promise<CreateUserState> {
+  const currentAdmin = await getAdminUser();
+  if (!currentAdmin) return { error: "Admins lang ang pwedeng mag-reset ng password." };
+
+  const userId = String(formData.get("userId") ?? "");
+  const password = String(formData.get("password") ?? "");
+  if (userId === currentAdmin.id) {
+    return { error: "Gamitin ang Settings para palitan ang sarili mong password." };
+  }
+  if (password.length < MIN_PASSWORD_LENGTH) {
+    return { error: `Password must be at least ${MIN_PASSWORD_LENGTH} characters.` };
+  }
+
+  const { error } = await createAdminClient().auth.admin.updateUserById(userId, { password });
+  if (error) {
+    if (error.code === "weak_password") return { error: "Masyadong mahina ang password." };
+    console.error("Failed to reset password", error);
+    return { error: "Hindi na-reset ang password. Subukan ulit." };
+  }
+
+  return { success: "Na-reset na ang password. Ibigay ito nang personal sa user." };
+}
+
 export async function deleteUser(userId: string): Promise<{ error?: string }> {
   const currentAdmin = await getAdminUser();
   if (!currentAdmin) return { error: "Admins lang ang pwedeng magtanggal ng account." };

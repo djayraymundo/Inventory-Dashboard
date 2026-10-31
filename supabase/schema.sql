@@ -6,6 +6,8 @@ create table if not exists public.profiles (
   full_name text not null,
   role text not null default 'Staff',
   is_admin boolean not null default false,
+  phone text not null default '',
+  address text not null default '',
   created_at timestamptz not null default now()
 );
 

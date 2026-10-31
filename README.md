@@ -29,7 +29,7 @@ Data and login are stored in [Supabase](https://supabase.com). All pages require
    ```
 
 2. In the Supabase Dashboard → **SQL Editor**, run `supabase/schema.sql`, then `supabase/seed.sql` (sample inventory).
-   Projects set up before user roles existed: also run `supabase/migrations/002_staff_roles.sql`.
+   Projects set up earlier: also run any files in `supabase/migrations/` not yet applied, in order.
 3. **Authentication → Sign In / Providers**: turn off **Allow new users to sign up**. Only admins create accounts.
 4. **Authentication → Users → Add user → Create new user**: create your own account and tick **Auto Confirm User**.
    The first account becomes the administrator.

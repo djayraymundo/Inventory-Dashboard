@@ -1,9 +1,10 @@
 "use client";
 
 import { useState, useTransition } from "react";
-import { Trash2, UserPlus } from "lucide-react";
+import { KeyRound, Trash2, UserPlus } from "lucide-react";
 import { deleteUser } from "./actions";
 import AddUserModal from "./AddUserModal";
+import ResetPasswordModal from "./ResetPasswordModal";
 
 export interface UserRow {
   id: string;
@@ -33,6 +34,7 @@ export default function UsersTable({
 }) {
   const [addOpen, setAddOpen] = useState(false);
   const [deletingId, setDeletingId] = useState<string | null>(null);
+  const [resetUser, setResetUser] = useState<UserRow | null>(null);
   const [isPending, startTransition] = useTransition();
 
   function handleDelete(user: UserRow) {
@@ -94,16 +96,27 @@ export default function UsersTable({
                 <td className="px-4 py-3 text-gray-500">{formatDate(user.lastSignInAt)}</td>
                 <td className="px-4 py-3 text-right">
                   {user.id !== currentUserId && (
-                    <button
-                      type="button"
-                      onClick={() => handleDelete(user)}
-                      disabled={isPending && deletingId === user.id}
-                      title="Remove user"
-                      aria-label={`Remove ${user.name}`}
-                      className="rounded p-1.5 text-gray-400 hover:bg-red-50 hover:text-red-600 disabled:opacity-50"
-                    >
-                      <Trash2 className="h-4 w-4" />
-                    </button>
+                    <div className="flex justify-end gap-1">
+                      <button
+                        type="button"
+                        onClick={() => setResetUser(user)}
+                        title="Reset password"
+                        aria-label={`Reset password for ${user.name}`}
+                        className="rounded p-1.5 text-gray-400 hover:bg-blue-50 hover:text-blue-600"
+                      >
+                        <KeyRound className="h-4 w-4" />
+                      </button>
+                      <button
+                        type="button"
+                        onClick={() => handleDelete(user)}
+                        disabled={isPending && deletingId === user.id}
+                        title="Remove user"
+                        aria-label={`Remove ${user.name}`}
+                        className="rounded p-1.5 text-gray-400 hover:bg-red-50 hover:text-red-600 disabled:opacity-50"
+                      >
+                        <Trash2 className="h-4 w-4" />
+                      </button>
+                    </div>
                   )}
                 </td>
               </tr>
@@ -114,6 +127,7 @@ export default function UsersTable({
 
       {/* Mounted only while open so each opening starts with a fresh form. */}
       {addOpen && <AddUserModal open onClose={() => setAddOpen(false)} />}
+      {resetUser && <ResetPasswordModal user={resetUser} onClose={() => setResetUser(null)} />}
     </>
   );
 }
