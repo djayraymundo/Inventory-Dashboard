@@ -16,6 +16,17 @@ bun dev
 
 Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
 
+## Login (demo, no database yet)
+
+All pages require signing in. Accounts are hardcoded in `lib/auth.ts`:
+
+| Email | Password | Role |
+|---|---|---|
+| admin@stockpilot.local | admin123 | Inventory Manager |
+| staff@stockpilot.local | staff123 | Warehouse Staff |
+
+Sessions are signed cookies. Set `AUTH_SECRET` in `.env.local` to override the default dev secret.
+
 You can start editing the page by modifying `app/page.tsx`. The page auto-updates as you edit the file.
 
 This project uses [`next/font`](https://nextjs.org/docs/app/building-your-application/optimizing/fonts) to automatically optimize and load [Geist](https://vercel.com/font), a new font family for Vercel.

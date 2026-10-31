@@ -1,7 +1,9 @@
 "use client";
 
 import { useState } from "react";
-import { Search, Bell } from "lucide-react";
+import { Search, Bell, LogOut } from "lucide-react";
+import { logout } from "@/app/login/actions";
+import { useSession } from "@/lib/session-context";
 
 interface TopBarProps {
   onSearch?: (query: string) => void;
@@ -10,6 +12,7 @@ interface TopBarProps {
 
 export default function TopBar({ onSearch, notificationCount = 3 }: TopBarProps) {
   const [query, setQuery] = useState("");
+  const user = useSession();
 
   function handleChange(e: React.ChangeEvent<HTMLInputElement>) {
     setQuery(e.target.value);
@@ -42,12 +45,22 @@ export default function TopBar({ onSearch, notificationCount = 3 }: TopBarProps)
         </button>
         <div className="flex items-center gap-3 border-l border-gray-200 pl-4">
           <div className="flex h-9 w-9 items-center justify-center rounded-full bg-blue-600 text-sm font-semibold text-white">
-            JD
+            {user.initials}
           </div>
           <div className="hidden text-left sm:block">
-            <p className="text-sm font-semibold text-gray-800">Juan Dela Cruz</p>
-            <p className="text-xs text-gray-500">Inventory Manager</p>
+            <p className="text-sm font-semibold text-gray-800">{user.name}</p>
+            <p className="text-xs text-gray-500">{user.role}</p>
           </div>
+          <form action={logout}>
+            <button
+              type="submit"
+              title="Sign out"
+              aria-label="Sign out"
+              className="rounded-full p-2 text-gray-500 hover:bg-gray-100 hover:text-red-600"
+            >
+              <LogOut className="h-5 w-5" />
+            </button>
+          </form>
         </div>
       </div>
     </header>

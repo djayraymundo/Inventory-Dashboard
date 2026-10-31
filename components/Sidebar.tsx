@@ -10,7 +10,9 @@ import {
   FileBarChart2,
   Settings,
   Warehouse,
+  LogOut,
 } from "lucide-react";
+import { logout } from "@/app/login/actions";
 import { useInventory } from "@/lib/inventory-context";
 
 const navItems = [
@@ -71,8 +73,17 @@ export default function Sidebar() {
         })}
       </nav>
 
-      <div className="border-t border-slate-800 px-4 py-4 text-xs text-slate-500">
-        v1.0.0 · Static Demo
+      <div className="border-t border-slate-800 px-3 py-3">
+        <form action={logout}>
+          <button
+            type="submit"
+            className="flex w-full items-center gap-3 rounded-lg px-3 py-2.5 text-sm font-medium text-slate-300 transition-colors hover:bg-slate-800 hover:text-white"
+          >
+            <LogOut className="h-4 w-4" />
+            Sign out
+          </button>
+        </form>
+        <p className="px-3 pt-2 text-xs text-slate-500">v1.0.0 · Static Demo</p>
       </div>
     </aside>
   );

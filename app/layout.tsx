@@ -1,8 +1,6 @@
 import type { Metadata } from "next";
 import localFont from "next/font/local";
 import "./globals.css";
-import Sidebar from "@/components/Sidebar";
-import { InventoryProvider } from "@/lib/inventory-context";
 
 const geistSans = localFont({
   src: "./fonts/GeistVF.woff",
@@ -28,12 +26,7 @@ export default function RootLayout({
   return (
     <html lang="en">
       <body className={`${geistSans.variable} ${geistMono.variable} bg-gray-50 antialiased`}>
-        <InventoryProvider>
-          <div className="flex min-h-screen">
-            <Sidebar />
-            <div className="flex min-h-screen flex-1 flex-col lg:ml-64">{children}</div>
-          </div>
-        </InventoryProvider>
+        {children}
       </body>
     </html>
   );
