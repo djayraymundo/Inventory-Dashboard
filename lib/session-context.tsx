@@ -1,11 +1,18 @@
 "use client";
 
 import { createContext, useContext } from "react";
-import type { User } from "./auth";
 
-const SessionContext = createContext<User | null>(null);
+export interface SessionUser {
+  id: string;
+  email: string;
+  name: string;
+  role: string;
+  initials: string;
+}
 
-export function SessionProvider({ user, children }: { user: User; children: React.ReactNode }) {
+const SessionContext = createContext<SessionUser | null>(null);
+
+export function SessionProvider({ user, children }: { user: SessionUser; children: React.ReactNode }) {
   return <SessionContext.Provider value={user}>{children}</SessionContext.Provider>;
 }
 

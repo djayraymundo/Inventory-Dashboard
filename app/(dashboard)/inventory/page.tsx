@@ -68,11 +68,16 @@ export default function InventoryPage() {
     );
   }
 
-  function handleAddItem(data: NewInventoryItem) {
-    const item = addItem(data);
-    setAddOpen(false);
-    setPage(1);
-    setSelectedItemId(item.id);
+  async function handleAddItem(data: NewInventoryItem) {
+    try {
+      const item = await addItem(data);
+      setAddOpen(false);
+      setPage(1);
+      setSelectedItemId(item.id);
+    } catch (error) {
+      console.error("Failed to add item", error);
+      alert("Hindi na-save ang bagong item. Subukan ulit.");
+    }
   }
 
   return (

@@ -16,16 +16,21 @@ bun dev
 
 Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
 
-## Login (demo, no database yet)
+## Supabase setup
 
-All pages require signing in. Accounts are hardcoded in `lib/auth.ts`:
+Data and login are stored in [Supabase](https://supabase.com). All pages require signing in.
 
-| Email | Password | Role |
-|---|---|---|
-| admin@stockpilot.local | admin123 | Inventory Manager |
-| staff@stockpilot.local | staff123 | Warehouse Staff |
+1. Create `.env.local` in the project root (it is git-ignored):
 
-Sessions are signed cookies. Set `AUTH_SECRET` in `.env.local` to override the default dev secret.
+   ```
+   NEXT_PUBLIC_SUPABASE_URL=https://<project-ref>.supabase.co
+   NEXT_PUBLIC_SUPABASE_ANON_KEY=<anon or publishable key>
+   ```
+
+2. In the Supabase Dashboard → **SQL Editor**, run `supabase/schema.sql`, then `supabase/seed.sql` (sample inventory).
+3. **Authentication → Sign In / Providers**: turn off **Allow new users to sign up**. Only admins create accounts.
+4. **Authentication → Users → Add user → Create new user**: enter email and password, tick **Auto Confirm User**.
+5. Optional: edit the user's display name and role in the `profiles` table (Table Editor).
 
 You can start editing the page by modifying `app/page.tsx`. The page auto-updates as you edit the file.
 

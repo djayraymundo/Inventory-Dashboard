@@ -1,41 +1,36 @@
 "use server";
 
-import { cookies } from "next/headers";
 import { redirect } from "next/navigation";
-import {
-  SESSION_COOKIE,
-  SESSION_MAX_AGE,
-  createSessionToken,
-  findAccount,
-} from "@/lib/auth";
+import { createClient } from "@/lib/supabase/server";
 
 export interface LoginState {
   error?: string;
 }
 
 export async function login(_prev: LoginState, formData: FormData): Promise<LoginState> {
-  const email = String(formData.get("email") ?? "");
+  const email = String(formData.get("email") ?? "").trim();
   const password = String(formData.get("password") ?? "");
   const from = String(formData.get("from") ?? "/");
 
   if (!email || !password) return { error: "Please enter your email and password." };
 
-  const user = findAccount(email, password);
-  if (!user) return { error: "Invalid email or password." };
-
-  cookies().set(SESSION_COOKIE, await createSessionToken(user), {
-    httpOnly: true,
-    sameSite: "lax",
-    secure: process.env.NODE_ENV === "production",
-    path: "/",
-    maxAge: SESSION_MAX_AGE,
-  });
+  const supabase = createClient();
+  const { error } = await supabase.auth.signInWithPassword({ email, password });
+  if (error) {
+    return {
+      error:
+        error.code === "invalid_credentials"
+          ? "Invalid email or password."
+          : "Unable to sign in right now. Please try again.",
+    };
+  }
 
   // Only allow internal redirects.
   redirect(from.startsWith("/") && !from.startsWith("//") ? from : "/");
 }
 
 export async function logout() {
-  cookies().delete(SESSION_COOKIE);
+  const supabase = createClient();
+  await supabase.auth.signOut();
   redirect("/login");
 }
