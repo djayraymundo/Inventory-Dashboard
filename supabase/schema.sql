@@ -4,18 +4,27 @@
 create table if not exists public.profiles (
   id uuid primary key references auth.users (id) on delete cascade,
   full_name text not null,
-  role text not null default 'Administrator',
+  role text not null default 'Staff',
+  is_admin boolean not null default false,
   created_at timestamptz not null default now()
 );
 
+-- The very first account becomes admin; later ones default to staff.
 create or replace function public.handle_new_user()
 returns trigger
 language plpgsql
 security definer set search_path = ''
 as $$
+declare
+  first_user boolean := not exists (select 1 from public.profiles);
 begin
-  insert into public.profiles (id, full_name)
-  values (new.id, coalesce(new.raw_user_meta_data ->> 'full_name', split_part(new.email, '@', 1)));
+  insert into public.profiles (id, full_name, role, is_admin)
+  values (
+    new.id,
+    coalesce(new.raw_user_meta_data ->> 'full_name', split_part(new.email, '@', 1)),
+    case when first_user then 'Administrator' else 'Staff' end,
+    first_user
+  );
   return new;
 end;
 $$;
@@ -65,9 +74,8 @@ drop policy if exists "Users can read own profile" on public.profiles;
 create policy "Users can read own profile" on public.profiles
   for select to authenticated using ((select auth.uid()) = id);
 
+-- No update policy: roles are changed only by admins via the server (service role).
 drop policy if exists "Users can update own profile" on public.profiles;
-create policy "Users can update own profile" on public.profiles
-  for update to authenticated using ((select auth.uid()) = id);
 
 drop policy if exists "Signed-in users manage items" on public.inventory_items;
 create policy "Signed-in users manage items" on public.inventory_items

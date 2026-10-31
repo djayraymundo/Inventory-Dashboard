@@ -25,12 +25,15 @@ Data and login are stored in [Supabase](https://supabase.com). All pages require
    ```
    NEXT_PUBLIC_SUPABASE_URL=https://<project-ref>.supabase.co
    NEXT_PUBLIC_SUPABASE_ANON_KEY=<anon or publishable key>
+   SUPABASE_SERVICE_ROLE_KEY=<service_role / secret key — server only, never share>
    ```
 
 2. In the Supabase Dashboard → **SQL Editor**, run `supabase/schema.sql`, then `supabase/seed.sql` (sample inventory).
+   Projects set up before user roles existed: also run `supabase/migrations/002_staff_roles.sql`.
 3. **Authentication → Sign In / Providers**: turn off **Allow new users to sign up**. Only admins create accounts.
-4. **Authentication → Users → Add user → Create new user**: enter email and password, tick **Auto Confirm User**.
-5. Optional: edit the user's display name and role in the `profiles` table (Table Editor).
+4. **Authentication → Users → Add user → Create new user**: create your own account and tick **Auto Confirm User**.
+   The first account becomes the administrator.
+5. Sign in and use **Users** in the sidebar to create staff accounts. Staff can use the inventory but not manage users.
 
 You can start editing the page by modifying `app/page.tsx`. The page auto-updates as you edit the file.
 

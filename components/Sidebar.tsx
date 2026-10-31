@@ -11,9 +11,11 @@ import {
   Settings,
   Warehouse,
   LogOut,
+  UsersRound,
 } from "lucide-react";
 import { logout } from "@/app/login/actions";
 import { useInventory } from "@/lib/inventory-context";
+import { useSession } from "@/lib/session-context";
 
 const navItems = [
   { name: "Dashboard", href: "/", icon: LayoutDashboard },
@@ -21,12 +23,15 @@ const navItems = [
   { name: "Low Stock", href: "/low-stock", icon: AlertTriangle, badge: "lowStock" as const },
   { name: "Incoming/Outgoing", href: "/incoming-outgoing", icon: ArrowLeftRight },
   { name: "Reports", href: "/reports", icon: FileBarChart2 },
+  { name: "Users", href: "/users", icon: UsersRound, adminOnly: true },
   { name: "Settings", href: "/settings", icon: Settings },
 ];
 
 export default function Sidebar() {
   const pathname = usePathname();
   const { items } = useInventory();
+  const { isAdmin } = useSession();
+  const visibleNavItems = navItems.filter((item) => !item.adminOnly || isAdmin);
   const lowStockCount = items.filter(
     (item) => item.status === "Low Stock" || item.status === "Out of Stock"
   ).length;
@@ -44,7 +49,7 @@ export default function Sidebar() {
       </div>
 
       <nav className="flex-1 space-y-1 px-3 py-4">
-        {navItems.map((item) => {
+        {visibleNavItems.map((item) => {
           const isActive =
             item.href === "/" ? pathname === "/" : pathname.startsWith(item.href);
           const Icon = item.icon;

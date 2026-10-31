@@ -28,7 +28,7 @@ export default async function DashboardLayout({ children }: { children: React.Re
 
   const { data: profile } = await supabase
     .from("profiles")
-    .select("full_name, role")
+    .select("full_name, role, is_admin")
     .eq("id", user.id)
     .maybeSingle();
 
@@ -37,8 +37,9 @@ export default async function DashboardLayout({ children }: { children: React.Re
     id: user.id,
     email: user.email ?? "",
     name,
-    role: profile?.role ?? "Administrator",
+    role: profile?.role ?? "Staff",
     initials: initialsOf(name),
+    isAdmin: profile?.is_admin ?? false,
   };
 
   let items: InventoryItem[] = [];

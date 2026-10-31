@@ -8,6 +8,7 @@ export interface SessionUser {
   name: string;
   role: string;
   initials: string;
+  isAdmin: boolean;
 }
 
 const SessionContext = createContext<SessionUser | null>(null);
