@@ -84,7 +84,7 @@ export default function InventoryPage() {
   return (
     <>
       <TopBar onSearch={handleSearch} />
-      <main className="flex-1 overflow-y-auto p-6">
+      <main className="flex-1 overflow-y-auto p-4 sm:p-6">
         <PageHeader
           title="Inventory"
           description={`Kumpletong listahan ng lahat ng items (${items.length} total).`}
@@ -100,22 +100,23 @@ export default function InventoryPage() {
           }
         />
 
-        <InventoryTable
-          items={paginatedItems}
-          selectedItemId={selectedItemId}
-          onSelectItem={(item) => setSelectedItemId(item.id)}
-          selectedIds={selectedIds}
-          onToggleSelect={toggleSelect}
-          onToggleSelectAll={toggleSelectAll}
-        />
-
-        <Pagination
-          currentPage={currentPage}
-          totalPages={totalPages}
-          totalItems={filteredItems.length}
-          pageSize={PAGE_SIZE}
-          onPageChange={setPage}
-        />
+        <section className="overflow-hidden rounded-xl border border-line bg-surface shadow-sm">
+          <InventoryTable
+            items={paginatedItems}
+            selectedItemId={selectedItemId}
+            onSelectItem={(item) => setSelectedItemId(item.id)}
+            selectedIds={selectedIds}
+            onToggleSelect={toggleSelect}
+            onToggleSelectAll={toggleSelectAll}
+          />
+          <Pagination
+            currentPage={currentPage}
+            totalPages={totalPages}
+            totalItems={filteredItems.length}
+            pageSize={PAGE_SIZE}
+            onPageChange={setPage}
+          />
+        </section>
       </main>
 
       <DetailPanel

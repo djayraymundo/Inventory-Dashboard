@@ -10,6 +10,18 @@ interface PaginationProps {
   onPageChange: (page: number) => void;
 }
 
+// Up to 7 slots: always first and last, the current page with its neighbours, gaps as "…".
+function pageList(current: number, total: number): (number | "gap")[] {
+  if (total <= 7) return Array.from({ length: total }, (_, i) => i + 1);
+  const start = Math.max(2, Math.min(current - 1, total - 4));
+  const end = Math.min(total - 1, Math.max(current + 1, 5));
+  const middle = Array.from({ length: end - start + 1 }, (_, i) => start + i);
+  return [1, ...(start > 2 ? ["gap" as const] : []), ...middle, ...(end < total - 1 ? ["gap" as const] : []), total];
+}
+
+const navButtonClass =
+  "flex h-8 w-8 items-center justify-center rounded-lg border border-line text-ink-muted hover:bg-surface-muted disabled:cursor-not-allowed disabled:opacity-40";
+
 export default function Pagination({
   currentPage,
   totalPages,
@@ -21,44 +33,54 @@ export default function Pagination({
   const end = Math.min(currentPage * pageSize, totalItems);
 
   return (
-    <div className="flex flex-wrap items-center justify-between gap-3 px-1 py-3 text-sm text-gray-500">
+    <div className="flex flex-wrap items-center justify-between gap-3 border-t border-line px-4 py-3 text-sm text-ink-muted">
       <p>
         Showing{" "}
-        <span className="font-medium text-gray-700">
-          {totalItems === 0 ? 0 : start}-{end}
+        <span className="font-medium tabular-nums text-ink">
+          {totalItems === 0 ? 0 : start}–{end}
         </span>{" "}
-        of <span className="font-medium text-gray-700">{totalItems}</span> items
+        of <span className="font-medium tabular-nums text-ink">{totalItems}</span> items
       </p>
-      <div className="flex items-center gap-1">
+      <nav aria-label="Pagination" className="flex items-center gap-1">
         <button
           type="button"
           disabled={currentPage === 1}
           onClick={() => onPageChange(currentPage - 1)}
-          className="flex h-8 w-8 items-center justify-center rounded-lg border border-gray-200 text-gray-500 hover:bg-gray-50 disabled:cursor-not-allowed disabled:opacity-40"
+          aria-label="Previous page"
+          className={navButtonClass}
         >
-          <ChevronLeft className="h-4 w-4" />
+          <ChevronLeft className="h-4 w-4" aria-hidden="true" />
         </button>
-        {Array.from({ length: totalPages }, (_, i) => i + 1).map((page) => (
-          <button
-            key={page}
-            type="button"
-            onClick={() => onPageChange(page)}
-            className={`flex h-8 w-8 items-center justify-center rounded-lg text-sm font-medium ${
-              page === currentPage ? "bg-blue-600 text-white" : "text-gray-500 hover:bg-gray-50"
-            }`}
-          >
-            {page}
-          </button>
-        ))}
+        {pageList(currentPage, totalPages).map((page, i) =>
+          page === "gap" ? (
+            <span key={`gap-${i}`} aria-hidden="true" className="w-6 text-center text-ink-subtle">
+              …
+            </span>
+          ) : (
+            <button
+              key={page}
+              type="button"
+              onClick={() => onPageChange(page)}
+              aria-label={`Page ${page}`}
+              aria-current={page === currentPage ? "page" : undefined}
+              className={`flex h-8 min-w-8 items-center justify-center rounded-lg px-2 text-sm font-medium tabular-nums ${
+                page === currentPage ? "bg-brand text-white shadow-sm" : "text-ink-muted hover:bg-surface-muted"
+              }`}
+            >
+              {page}
+            </button>
+          )
+        )}
         <button
           type="button"
           disabled={currentPage === totalPages}
           onClick={() => onPageChange(currentPage + 1)}
-          className="flex h-8 w-8 items-center justify-center rounded-lg border border-gray-200 text-gray-500 hover:bg-gray-50 disabled:cursor-not-allowed disabled:opacity-40"
+          aria-label="Next page"
+          className={navButtonClass}
         >
-          <ChevronRight className="h-4 w-4" />
+          <ChevronRight className="h-4 w-4" aria-hidden="true" />
         </button>
-      </div>
+      </nav>
     </div>
   );
 }

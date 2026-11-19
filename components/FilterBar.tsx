@@ -27,12 +27,12 @@ export const emptyFilters: Filters = {
 };
 
 const fieldClass =
-  "h-9 w-36 rounded-lg border border-gray-200 bg-gray-50 px-3 text-sm text-gray-700 focus:border-blue-400 focus:bg-white focus:outline-none focus:ring-2 focus:ring-blue-100";
+  "h-9 w-full rounded-lg border border-line bg-surface px-3 text-sm text-ink shadow-sm focus:border-brand focus:outline-none focus:ring-2 focus:ring-brand/20 sm:w-40";
 
-const dateFieldClass = `${fieldClass} text-center`;
+const dateFieldClass = `${fieldClass} sm:w-36`;
 
 const buttonClass =
-  "flex h-9 items-center gap-2 rounded-lg px-4 text-sm font-medium transition-colors";
+  "flex h-9 items-center justify-center gap-2 rounded-lg px-4 text-sm font-medium transition-colors";
 
 export default function FilterBar({ locations, categories, statuses, onApply }: FilterBarProps) {
   const [filters, setFilters] = useState<Filters>(emptyFilters);
@@ -47,7 +47,11 @@ export default function FilterBar({ locations, categories, statuses, onApply }: 
   }
 
   return (
-    <div className="flex flex-wrap items-center gap-2 rounded-xl border border-gray-200 bg-white p-4 shadow-sm">
+    <div
+      role="search"
+      aria-label="Filter inventory"
+      className="flex flex-wrap items-center gap-2 border-b border-line bg-surface-muted/40 p-4"
+    >
       <select
         aria-label="Filter by location"
         value={filters.location}
@@ -90,40 +94,42 @@ export default function FilterBar({ locations, categories, statuses, onApply }: 
         ))}
       </select>
 
-      <span className="text-sm font-medium text-gray-500">Date Range</span>
-      <div className="flex items-center gap-2">
+      <fieldset className="flex w-full items-center gap-2 sm:w-auto">
+        <legend className="sr-only">Last updated date range</legend>
         <input
           type="date"
-          aria-label="Date from"
+          aria-label="Last updated from"
           value={filters.dateFrom}
           onChange={(e) => update("dateFrom", e.target.value)}
           className={dateFieldClass}
         />
-        <span className="text-xs text-gray-400">to</span>
+        <span aria-hidden="true" className="text-xs text-ink-subtle">
+          to
+        </span>
         <input
           type="date"
-          aria-label="Date to"
+          aria-label="Last updated to"
           value={filters.dateTo}
           onChange={(e) => update("dateTo", e.target.value)}
           className={dateFieldClass}
         />
-      </div>
+      </fieldset>
 
-      <div className="ml-auto flex items-center gap-2">
+      <div className="flex w-full items-center gap-2 sm:ml-auto sm:w-auto">
         <button
           type="button"
           onClick={handleClear}
-          className={`${buttonClass} border border-gray-200 text-gray-600 hover:bg-gray-50`}
+          className={`${buttonClass} flex-1 border border-line bg-surface text-ink-muted hover:bg-surface-muted sm:flex-none`}
         >
-          <RotateCcw className="h-4 w-4" />
+          <RotateCcw className="h-4 w-4" aria-hidden="true" />
           Clear
         </button>
         <button
           type="button"
           onClick={() => onApply(filters)}
-          className={`${buttonClass} bg-blue-600 text-white hover:bg-blue-700`}
+          className={`${buttonClass} flex-1 bg-brand text-white shadow-sm hover:bg-brand-strong sm:flex-none`}
         >
-          <Filter className="h-4 w-4" />
+          <Filter className="h-4 w-4" aria-hidden="true" />
           Apply
         </button>
       </div>
