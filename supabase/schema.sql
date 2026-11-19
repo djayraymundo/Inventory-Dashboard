@@ -50,6 +50,7 @@ create table if not exists public.inventory_items (
   quantity integer not null default 0 check (quantity >= 0),
   unit text not null default 'pcs',
   min_threshold integer not null default 0 check (min_threshold >= 0),
+  unit_cost numeric(12,2) not null default 0 check (unit_cost >= 0),
   supplier text not null default '',
   last_updated date not null default current_date,
   created_at timestamptz not null default now()

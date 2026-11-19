@@ -17,6 +17,7 @@ interface DetailPanelProps {
   item: InventoryItem | null;
   onClose: () => void;
   onUpdateQuantity: (id: string, quantity: number) => void;
+  onUpdateUnitCost: (id: string, unitCost: number) => void;
   onAddNote: (id: string, note: string) => void;
 }
 
@@ -29,15 +30,26 @@ const historyDotStyles: Record<HistoryEventType, string> = {
 };
 
 const inputClass =
-  "w-full rounded-lg border border-line bg-surface px-3 py-1.5 text-sm text-ink shadow-sm focus:border-brand focus:outline-none focus:ring-2 focus:ring-brand/20";
+  "w-full rounded-lg border border-line bg-surface px-3 py-1.5 text-sm text-ink shadow-xs focus:border-brand focus:outline-hidden focus:ring-2 focus:ring-brand/20";
 const saveButtonClass =
-  "rounded-lg bg-brand px-3 py-1.5 text-sm font-medium text-white shadow-sm hover:bg-brand-strong";
+  "rounded-lg bg-brand px-3 py-1.5 text-sm font-medium text-white shadow-xs hover:bg-brand-strong";
 const actionButtonClass =
   "flex flex-col items-center gap-1 rounded-lg border border-line px-2 py-2 text-xs font-medium text-ink-muted transition-colors hover:bg-surface-muted aria-expanded:border-brand aria-expanded:bg-brand-soft aria-expanded:text-brand";
 
-export default function DetailPanel({ item, onClose, onUpdateQuantity, onAddNote }: DetailPanelProps) {
+const peso = new Intl.NumberFormat("en-PH", { style: "currency", currency: "PHP" });
+
+export default function DetailPanel({
+  item,
+  onClose,
+  onUpdateQuantity,
+  onUpdateUnitCost,
+  onAddNote,
+}: DetailPanelProps) {
   const [editingQty, setEditingQty] = useState(false);
   const [qtyInput, setQtyInput] = useState("");
+  const [editingCost, setEditingCost] = useState(false);
+  const [costInput, setCostInput] = useState("");
+  const costId = useId();
   const [addingNote, setAddingNote] = useState(false);
   const [noteInput, setNoteInput] = useState("");
   const [showFullHistory, setShowFullHistory] = useState(false);
@@ -46,10 +58,12 @@ export default function DetailPanel({ item, onClose, onUpdateQuantity, onAddNote
 
   useEffect(() => {
     setEditingQty(false);
+    setEditingCost(false);
     setAddingNote(false);
     setShowFullHistory(false);
     setNoteInput("");
     setQtyInput(item ? String(item.quantity) : "");
+    setCostInput(item ? String(item.unitCost) : "");
   }, [item?.id]);
 
   // Non-modal panel: Esc closes it, unless Esc is meant for an open menu or dialog on top.
@@ -144,7 +158,61 @@ export default function DetailPanel({ item, onClose, onUpdateQuantity, onAddNote
                 {item.supplier}
               </dd>
             </div>
+            <div className="col-span-2 flex items-end justify-between gap-2">
+              <div>
+                <dt className="text-xs text-ink-subtle">Unit Cost</dt>
+                <dd className="font-medium tabular-nums text-ink">
+                  {peso.format(item.unitCost)}
+                  <span className="ml-2 text-xs font-normal text-ink-subtle">
+                    Value {peso.format(item.unitCost * item.quantity)}
+                  </span>
+                </dd>
+              </div>
+              <button
+                type="button"
+                onClick={() => {
+                  setEditingCost((prev) => !prev);
+                  setCostInput(String(item.unitCost));
+                }}
+                aria-expanded={editingCost}
+                className="text-xs font-medium text-brand hover:underline"
+              >
+                Edit cost
+              </button>
+            </div>
           </dl>
+
+          {editingCost && (
+            <div className="mb-6 rounded-xl border border-line bg-surface-muted/50 p-3">
+              <label htmlFor={costId} className="mb-1 block text-xs font-medium text-ink-muted">
+                Unit Cost (₱)
+              </label>
+              <div className="flex gap-2">
+                <input
+                  id={costId}
+                  type="number"
+                  min={0}
+                  step="0.01"
+                  value={costInput}
+                  onChange={(e) => setCostInput(e.target.value)}
+                  className={inputClass}
+                />
+                <button
+                  type="button"
+                  onClick={() => {
+                    const value = Number(costInput);
+                    if (costInput !== "" && Number.isFinite(value) && value >= 0) {
+                      onUpdateUnitCost(item.id, value);
+                      setEditingCost(false);
+                    }
+                  }}
+                  className={saveButtonClass}
+                >
+                  Save
+                </button>
+              </div>
+            </div>
+          )}
 
           <div className="mb-6">
             <div className="mb-2 flex items-center justify-between text-sm">

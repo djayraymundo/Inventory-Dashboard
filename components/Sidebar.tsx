@@ -84,7 +84,7 @@ export default function Sidebar({ open, onClose }: SidebarProps) {
       >
         <div className="flex items-center justify-between gap-2 px-5 py-5">
           <div className="flex items-center gap-2.5">
-            <div className="flex h-9 w-9 items-center justify-center rounded-lg bg-brand shadow-sm shadow-brand/40">
+            <div className="flex h-9 w-9 items-center justify-center rounded-lg bg-brand shadow-xs shadow-brand/40">
               <Warehouse className="h-5 w-5 text-white" />
             </div>
             <div>

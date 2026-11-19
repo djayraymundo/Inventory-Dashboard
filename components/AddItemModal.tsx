@@ -21,6 +21,7 @@ interface FormState {
   quantity: string;
   unit: string;
   minThreshold: string;
+  unitCost: string;
   supplier: string;
 }
 
@@ -33,6 +34,7 @@ const emptyForm: FormState = {
   quantity: "",
   unit: "pcs",
   minThreshold: "",
+  unitCost: "",
   supplier: "",
 };
 
@@ -63,6 +65,7 @@ export default function AddItemModal({
     e.preventDefault();
     const quantity = Number(form.quantity);
     const minThreshold = Number(form.minThreshold);
+    const unitCost = Number(form.unitCost);
     const required = [form.name, form.sku, form.category, form.location, form.unit, form.supplier];
 
     if (required.some((value) => value.trim() === "")) {
@@ -77,6 +80,10 @@ export default function AddItemModal({
       setError("Min. threshold must be a whole number of 0 or more.");
       return;
     }
+    if (form.unitCost === "" || !Number.isFinite(unitCost) || unitCost < 0) {
+      setError("Unit cost must be a number of 0 or more.");
+      return;
+    }
 
     onSubmit({
       name: form.name.trim(),
@@ -87,6 +94,7 @@ export default function AddItemModal({
       quantity,
       unit: form.unit.trim(),
       minThreshold,
+      unitCost,
       supplier: form.supplier.trim(),
     });
   }
@@ -171,6 +179,16 @@ export default function AddItemModal({
               min={0}
               value={form.minThreshold}
               onChange={(e) => update("minThreshold", e.target.value)}
+              className={fieldClass}
+            />
+          </Field>
+          <Field label="Unit Cost (₱)" required>
+            <input
+              type="number"
+              min={0}
+              step="0.01"
+              value={form.unitCost}
+              onChange={(e) => update("unitCost", e.target.value)}
               className={fieldClass}
             />
           </Field>

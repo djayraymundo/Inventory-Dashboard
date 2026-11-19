@@ -20,12 +20,12 @@ export default function LowStockPage() {
           description={`${lowStockItems.length} items ang nangangailangan ng restock ngayon.`}
         />
 
-        <section className="overflow-hidden rounded-xl border border-line bg-surface shadow-sm">
+        <section className="overflow-hidden rounded-xl border border-line bg-surface shadow-xs">
           <div
             role="region"
             aria-label="Low stock items"
             tabIndex={0}
-            className="data-table-wrap max-h-[70vh] overflow-auto focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-inset focus-visible:ring-brand/40"
+            className="data-table-wrap max-h-[70vh] overflow-auto focus-visible:outline-hidden focus-visible:ring-2 focus-visible:ring-inset focus-visible:ring-brand/40"
           >
             <table className="data-table w-full min-w-[700px] border-separate border-spacing-0 text-left text-sm">
               <thead className="sticky top-0 z-10">

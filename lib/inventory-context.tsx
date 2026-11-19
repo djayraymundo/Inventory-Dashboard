@@ -15,6 +15,7 @@ interface InventoryContextValue {
   items: InventoryItem[];
   addItem: (item: NewInventoryItem) => Promise<InventoryItem>;
   updateQuantity: (id: string, quantity: number) => Promise<void>;
+  updateUnitCost: (id: string, unitCost: number) => Promise<void>;
   addNote: (id: string, note: string) => Promise<void>;
 }
 
@@ -57,6 +58,7 @@ export function InventoryProvider({
         quantity: data.quantity,
         unit: data.unit,
         min_threshold: data.minThreshold,
+        unit_cost: data.unitCost,
         supplier: data.supplier,
         last_updated: today(),
       })
@@ -96,6 +98,26 @@ export function InventoryProvider({
     }
   }
 
+  async function updateUnitCost(id: string, unitCost: number) {
+    try {
+      const { data: row, error } = await supabase
+        .from("inventory_items")
+        .update({ unit_cost: unitCost, last_updated: today() })
+        .eq("id", id)
+        .select(ITEM_SELECT)
+        .single();
+      if (error) throw error;
+      const event = await insertHistory(id, "Adjusted", `Unit cost updated to ₱${unitCost.toFixed(2)}`);
+
+      const updated = toInventoryItem(row as ItemRow);
+      updated.history = [event, ...updated.history];
+      setItems((prev) => prev.map((i) => (i.id === id ? updated : i)));
+    } catch (error) {
+      console.error("Failed to update unit cost", error);
+      alert("Hindi na-save ang bagong unit cost. Subukan ulit.");
+    }
+  }
+
   async function addNote(id: string, note: string) {
     try {
       const event = await insertHistory(id, "Note", note);
@@ -109,7 +131,7 @@ export function InventoryProvider({
   }
 
   return (
-    <InventoryContext.Provider value={{ items, addItem, updateQuantity, addNote }}>
+    <InventoryContext.Provider value={{ items, addItem, updateQuantity, updateUnitCost, addNote }}>
       {children}
     </InventoryContext.Provider>
   );

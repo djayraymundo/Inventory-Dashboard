@@ -21,6 +21,7 @@ export interface InventoryItem {
   quantity: number;
   unit: string;
   minThreshold: number;
+  unitCost: number;
   status: StockStatus;
   supplier: string;
   lastUpdated: string;

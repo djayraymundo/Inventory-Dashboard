@@ -34,7 +34,7 @@ export default function ProfileForm({ email, role, fullName, phone, address }: P
   const [state, formAction] = useFormState(updateProfile, {});
 
   return (
-    <form action={formAction} className="rounded-xl border border-line bg-surface shadow-sm">
+    <form action={formAction} className="rounded-xl border border-line bg-surface shadow-xs">
       <div className="flex items-center gap-3 border-b border-line px-5 py-4">
         <div className="flex h-9 w-9 items-center justify-center rounded-lg bg-brand-soft text-brand">
           <UserRound className="h-5 w-5" />

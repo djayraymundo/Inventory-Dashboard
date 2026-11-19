@@ -4,20 +4,14 @@ import { useMemo, useState } from "react";
 import { Plus } from "lucide-react";
 import TopBar from "@/components/TopBar";
 import PageHeader from "@/components/PageHeader";
-import InventoryTable from "@/components/InventoryTable";
-import Pagination from "@/components/Pagination";
+import InventoryDataTable from "@/components/InventoryDataTable";
 import DetailPanel from "@/components/DetailPanel";
 import AddItemModal from "@/components/AddItemModal";
 import { NewInventoryItem, useInventory } from "@/lib/inventory-context";
 
-const PAGE_SIZE = 10;
-
 export default function InventoryPage() {
-  const { items, addItem, updateQuantity, addNote } = useInventory();
-  const [search, setSearch] = useState("");
-  const [page, setPage] = useState(1);
+  const { items, addItem, updateQuantity, updateUnitCost, addNote } = useInventory();
   const [selectedItemId, setSelectedItemId] = useState<string | null>(null);
-  const [selectedIds, setSelectedIds] = useState<string[]>([]);
   const [addOpen, setAddOpen] = useState(false);
 
   const locations = useMemo(
@@ -29,51 +23,12 @@ export default function InventoryPage() {
     [items]
   );
 
-  const filteredItems = useMemo(() => {
-    const query = search.trim().toLowerCase();
-    if (!query) return items;
-    return items.filter(
-      (item) =>
-        item.sku.toLowerCase().includes(query) ||
-        item.name.toLowerCase().includes(query) ||
-        item.location.toLowerCase().includes(query) ||
-        item.batchNumber.toLowerCase().includes(query)
-    );
-  }, [items, search]);
-
-  const totalPages = Math.max(1, Math.ceil(filteredItems.length / PAGE_SIZE));
-  const currentPage = Math.min(page, totalPages);
-  const paginatedItems = filteredItems.slice(
-    (currentPage - 1) * PAGE_SIZE,
-    currentPage * PAGE_SIZE
-  );
-
   const selectedItem = items.find((item) => item.id === selectedItemId) ?? null;
-
-  function handleSearch(query: string) {
-    setSearch(query);
-    setPage(1);
-  }
-
-  function toggleSelect(id: string) {
-    setSelectedIds((prev) => (prev.includes(id) ? prev.filter((x) => x !== id) : [...prev, id]));
-  }
-
-  function toggleSelectAll() {
-    const idsOnPage = paginatedItems.map((item) => item.id);
-    const allSelected = idsOnPage.every((id) => selectedIds.includes(id));
-    setSelectedIds((prev) =>
-      allSelected
-        ? prev.filter((id) => !idsOnPage.includes(id))
-        : Array.from(new Set([...prev, ...idsOnPage]))
-    );
-  }
 
   async function handleAddItem(data: NewInventoryItem) {
     try {
       const item = await addItem(data);
       setAddOpen(false);
-      setPage(1);
       setSelectedItemId(item.id);
     } catch (error) {
       console.error("Failed to add item", error);
@@ -83,7 +38,7 @@ export default function InventoryPage() {
 
   return (
     <>
-      <TopBar onSearch={handleSearch} />
+      <TopBar />
       <main className="flex-1 overflow-y-auto p-4 sm:p-6">
         <PageHeader
           title="Inventory"
@@ -92,7 +47,7 @@ export default function InventoryPage() {
             <button
               type="button"
               onClick={() => setAddOpen(true)}
-              className="flex h-9 items-center gap-2 rounded-lg bg-brand px-4 text-sm font-medium text-white shadow-sm transition-colors hover:bg-brand-strong"
+              className="flex h-9 items-center gap-2 rounded-lg bg-brand px-4 text-sm font-medium text-white shadow-xs transition-colors hover:bg-brand-strong"
             >
               <Plus className="h-4 w-4" />
               Add Item
@@ -100,29 +55,18 @@ export default function InventoryPage() {
           }
         />
 
-        <section className="overflow-hidden rounded-xl border border-line bg-surface shadow-sm">
-          <InventoryTable
-            items={paginatedItems}
-            selectedItemId={selectedItemId}
-            onSelectItem={(item) => setSelectedItemId(item.id)}
-            selectedIds={selectedIds}
-            onToggleSelect={toggleSelect}
-            onToggleSelectAll={toggleSelectAll}
-          />
-          <Pagination
-            currentPage={currentPage}
-            totalPages={totalPages}
-            totalItems={filteredItems.length}
-            pageSize={PAGE_SIZE}
-            onPageChange={setPage}
-          />
-        </section>
+        <InventoryDataTable
+          items={items}
+          selectedItemId={selectedItemId}
+          onSelectItem={(item) => setSelectedItemId(item.id)}
+        />
       </main>
 
       <DetailPanel
         item={selectedItem}
         onClose={() => setSelectedItemId(null)}
         onUpdateQuantity={updateQuantity}
+        onUpdateUnitCost={updateUnitCost}
         onAddNote={addNote}
       />
 

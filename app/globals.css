@@ -1,12 +1,14 @@
-@tailwind base;
-@tailwind components;
-@tailwind utilities;
+@import "tailwindcss";
+@import "tw-animate-css";
+@import "shadcn/tailwind.css";
+
+@custom-variant dark (&:is(.dark *));
 
 :root {
   /* Light only for now; switch to "light dark" when dark tokens are added (Phase 5). */
   color-scheme: light;
 
-  /* RGB channels, used by tailwind.config.ts tokens (e.g. bg-surface, text-ink-muted). */
+  /* RGB channels, used by the @theme tokens below (e.g. bg-surface, text-ink-muted). */
   --canvas: 248 250 252; /* slate-50: page background */
   --surface: 255 255 255; /* cards, bars, panels */
   --surface-muted: 241 245 249; /* slate-100: hover, table headers */
@@ -18,7 +20,111 @@
   --brand-strong: 29 78 216; /* blue-700: hover */
   --brand-soft: 239 246 255; /* blue-50: tinted backgrounds */
 
+  /* shadcn tokens, aligned with the app palette above. */
+  --background: rgb(var(--canvas));
+  --foreground: rgb(var(--ink));
+  --card: rgb(var(--surface));
+  --card-foreground: rgb(var(--ink));
+  --popover: rgb(var(--surface));
+  --popover-foreground: rgb(var(--ink));
+  --primary: rgb(var(--brand));
+  --primary-foreground: oklch(0.985 0 0);
+  --secondary: rgb(var(--surface-muted));
+  --secondary-foreground: rgb(var(--ink));
+  --muted: rgb(var(--surface-muted));
+  --muted-foreground: rgb(var(--ink-subtle));
+  --accent: rgb(var(--surface-muted));
+  --accent-foreground: rgb(var(--ink));
+  --destructive: oklch(0.577 0.245 27.325);
+  --border: rgb(var(--line));
+  --input: rgb(var(--line));
+  --ring: rgb(var(--brand) / 0.5);
+  --chart-1: oklch(0.546 0.245 262.881);
+  --chart-2: oklch(0.6 0.118 184.704);
+  --chart-3: oklch(0.769 0.188 70.08);
+  --chart-4: oklch(0.577 0.245 27.325);
+  --chart-5: oklch(0.627 0.265 303.9);
+  --radius: 0.625rem;
+  --sidebar: rgb(var(--surface));
+  --sidebar-foreground: rgb(var(--ink));
+  --sidebar-primary: rgb(var(--brand));
+  --sidebar-primary-foreground: oklch(0.985 0 0);
+  --sidebar-accent: rgb(var(--surface-muted));
+  --sidebar-accent-foreground: rgb(var(--ink));
+  --sidebar-border: rgb(var(--line));
+  --sidebar-ring: rgb(var(--brand) / 0.5);
+
   accent-color: rgb(var(--brand));
+}
+
+@theme {
+  --font-sans: var(--font-geist-sans), ui-sans-serif, system-ui, sans-serif;
+  --font-mono: var(--font-geist-mono), ui-monospace, SFMono-Regular, Menlo, monospace;
+
+  --color-canvas: rgb(var(--canvas));
+  --color-surface: rgb(var(--surface));
+  --color-surface-muted: rgb(var(--surface-muted));
+  --color-line: rgb(var(--line));
+  --color-ink: rgb(var(--ink));
+  --color-ink-muted: rgb(var(--ink-muted));
+  --color-ink-subtle: rgb(var(--ink-subtle));
+  --color-brand: rgb(var(--brand));
+  --color-brand-strong: rgb(var(--brand-strong));
+  --color-brand-soft: rgb(var(--brand-soft));
+}
+
+@theme inline {
+  --color-background: var(--background);
+  --color-foreground: var(--foreground);
+  --color-card: var(--card);
+  --color-card-foreground: var(--card-foreground);
+  --color-popover: var(--popover);
+  --color-popover-foreground: var(--popover-foreground);
+  --color-primary: var(--primary);
+  --color-primary-foreground: var(--primary-foreground);
+  --color-secondary: var(--secondary);
+  --color-secondary-foreground: var(--secondary-foreground);
+  --color-muted: var(--muted);
+  --color-muted-foreground: var(--muted-foreground);
+  --color-accent: var(--accent);
+  --color-accent-foreground: var(--accent-foreground);
+  --color-destructive: var(--destructive);
+  --color-border: var(--border);
+  --color-input: var(--input);
+  --color-ring: var(--ring);
+  --color-chart-1: var(--chart-1);
+  --color-chart-2: var(--chart-2);
+  --color-chart-3: var(--chart-3);
+  --color-chart-4: var(--chart-4);
+  --color-chart-5: var(--chart-5);
+  --color-sidebar: var(--sidebar);
+  --color-sidebar-foreground: var(--sidebar-foreground);
+  --color-sidebar-primary: var(--sidebar-primary);
+  --color-sidebar-primary-foreground: var(--sidebar-primary-foreground);
+  --color-sidebar-accent: var(--sidebar-accent);
+  --color-sidebar-accent-foreground: var(--sidebar-accent-foreground);
+  --color-sidebar-border: var(--sidebar-border);
+  --color-sidebar-ring: var(--sidebar-ring);
+  --radius-sm: calc(var(--radius) - 4px);
+  --radius-md: calc(var(--radius) - 2px);
+  --radius-lg: var(--radius);
+  --radius-xl: calc(var(--radius) + 4px);
+}
+
+@layer base {
+  /* v4 defaults borders to currentcolor; keep the v3 look. */
+  *,
+  ::after,
+  ::before,
+  ::backdrop,
+  ::file-selector-button {
+    border-color: var(--color-border);
+  }
+  /* v4 buttons default to cursor: default. */
+  button:not(:disabled),
+  [role="button"]:not(:disabled) {
+    cursor: pointer;
+  }
 }
 
 body {
@@ -35,15 +141,6 @@ dialog.modal::backdrop {
   backdrop-filter: blur(2px);
   overflow: hidden;
   overscroll-behavior: contain;
-}
-
-/* Row action menu: popover tethered to its trigger, flipping above near the viewport bottom.
-   Browsers without anchor positioning get top/left from InventoryTable's fallback. */
-.row-menu {
-  inset: auto;
-  position-area: block-end span-inline-start;
-  position-try-fallbacks: flip-block;
-  margin-block: 4px;
 }
 
 /* Data tables collapse into stacked cards when their own container is narrow. */
