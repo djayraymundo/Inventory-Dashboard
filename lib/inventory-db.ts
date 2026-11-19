@@ -28,6 +28,7 @@ export interface ItemRow {
   quantity: number;
   unit: string;
   min_threshold: number;
+  unit_cost: number;
   supplier: string;
   last_updated: string;
   item_history?: HistoryRow[];
@@ -61,6 +62,7 @@ export function toInventoryItem(row: ItemRow): InventoryItem {
     quantity: row.quantity,
     unit: row.unit,
     minThreshold: row.min_threshold,
+    unitCost: Number(row.unit_cost ?? 0), // 0 until migration 004 is applied
     status: computeStatus(row.quantity, row.min_threshold),
     supplier: row.supplier,
     lastUpdated: row.last_updated,

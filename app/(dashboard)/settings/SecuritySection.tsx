@@ -8,7 +8,7 @@ export default function SecuritySection() {
   const [open, setOpen] = useState(false);
 
   return (
-    <section className="rounded-xl border border-line bg-surface shadow-sm">
+    <section className="rounded-xl border border-line bg-surface shadow-xs">
       <div className="border-b border-line px-5 py-4">
         <h2 className="text-base font-semibold text-ink">Security</h2>
       </div>

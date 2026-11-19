@@ -20,7 +20,7 @@ export default function TopBar({ onSearch, notificationCount = 3 }: TopBarProps)
   }
 
   return (
-    <header className="sticky top-0 z-20 flex items-center gap-3 border-b border-line bg-surface/80 px-4 py-3 backdrop-blur sm:px-6">
+    <header className="sticky top-0 z-20 flex items-center gap-3 border-b border-line bg-surface/80 px-4 py-3 backdrop-blur-sm sm:px-6">
       <button
         ref={navTriggerRef}
         type="button"
@@ -42,7 +42,7 @@ export default function TopBar({ onSearch, notificationCount = 3 }: TopBarProps)
           autoComplete="off"
           spellCheck={false}
           placeholder="Search by SKU, item name, location, batch #"
-          className="w-full rounded-lg border border-line bg-surface-muted/60 py-2 pl-9 pr-3 text-sm text-ink placeholder:text-ink-subtle focus:border-brand focus:bg-surface focus:outline-none focus:ring-2 focus:ring-brand/20"
+          className="w-full rounded-lg border border-line bg-surface-muted/60 py-2 pl-9 pr-3 text-sm text-ink placeholder:text-ink-subtle focus:border-brand focus:bg-surface focus:outline-hidden focus:ring-2 focus:ring-brand/20"
         />
       </div>
 

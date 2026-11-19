@@ -107,8 +107,8 @@ export const modalButton = {
   secondary:
     "rounded-lg border border-line bg-surface px-4 py-2 text-sm font-medium text-ink-muted hover:bg-surface-muted",
   primary:
-    "flex items-center gap-2 rounded-lg bg-brand px-4 py-2 text-sm font-medium text-white shadow-sm hover:bg-brand-strong disabled:opacity-70",
+    "flex items-center gap-2 rounded-lg bg-brand px-4 py-2 text-sm font-medium text-white shadow-xs hover:bg-brand-strong disabled:opacity-70",
 };
 
 export const modalField =
-  "w-full rounded-lg border border-line bg-surface px-3 py-2 text-sm text-ink shadow-sm placeholder:text-ink-subtle focus:border-brand focus:outline-none focus:ring-2 focus:ring-brand/20";
+  "w-full rounded-lg border border-line bg-surface px-3 py-2 text-sm text-ink shadow-xs placeholder:text-ink-subtle focus:border-brand focus:outline-hidden focus:ring-2 focus:ring-brand/20";

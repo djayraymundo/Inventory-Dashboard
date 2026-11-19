@@ -12,10 +12,10 @@ export default function ProfileCard({ createdAt }: { createdAt: string }) {
   });
 
   return (
-    <section className="overflow-hidden rounded-xl border border-line bg-surface shadow-sm">
+    <section className="overflow-hidden rounded-xl border border-line bg-surface shadow-xs">
       <div className="h-20 bg-gradient-to-r from-slate-900 to-blue-700" />
       <div className="-mt-10 flex flex-col items-center px-5 pb-5 text-center">
-        <div className="flex h-20 w-20 items-center justify-center rounded-full border-4 border-surface bg-brand text-2xl font-semibold text-white shadow">
+        <div className="flex h-20 w-20 items-center justify-center rounded-full border-4 border-surface bg-brand text-2xl font-semibold text-white shadow-sm">
           {user.initials}
         </div>
         <h2 className="mt-3 text-lg font-semibold text-ink">{user.name}</h2>

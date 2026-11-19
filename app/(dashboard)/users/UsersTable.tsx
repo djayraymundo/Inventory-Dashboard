@@ -51,7 +51,7 @@ export default function UsersTable({
 
   return (
     <>
-      <section className="overflow-hidden rounded-xl border border-line bg-surface shadow-sm">
+      <section className="overflow-hidden rounded-xl border border-line bg-surface shadow-xs">
         <div className="flex items-center justify-between gap-4 border-b border-line bg-surface-muted/40 px-4 py-3">
           <p className="text-sm text-ink-muted">
             <span className="font-medium tabular-nums text-ink">{users.length}</span> account(s)
@@ -59,7 +59,7 @@ export default function UsersTable({
           <button
             type="button"
             onClick={() => setAddOpen(true)}
-            className="flex h-9 items-center gap-2 rounded-lg bg-brand px-4 text-sm font-medium text-white shadow-sm hover:bg-brand-strong"
+            className="flex h-9 items-center gap-2 rounded-lg bg-brand px-4 text-sm font-medium text-white shadow-xs hover:bg-brand-strong"
           >
             <UserPlus className="h-4 w-4" aria-hidden="true" />
             Add User
@@ -70,7 +70,7 @@ export default function UsersTable({
           role="region"
           aria-label="User accounts"
           tabIndex={0}
-          className="data-table-wrap max-h-[70vh] overflow-auto focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-inset focus-visible:ring-brand/40"
+          className="data-table-wrap max-h-[70vh] overflow-auto focus-visible:outline-hidden focus-visible:ring-2 focus-visible:ring-inset focus-visible:ring-brand/40"
         >
         <table className="data-table w-full min-w-[700px] border-separate border-spacing-0 text-left text-sm">
           <thead className="sticky top-0 z-10">
@@ -130,7 +130,7 @@ export default function UsersTable({
                         onClick={() => setResetUser(user)}
                         title="Reset password"
                         aria-label={`Reset password for ${user.name}`}
-                        className="rounded p-1.5 text-ink-subtle hover:bg-brand-soft hover:text-brand"
+                        className="rounded-sm p-1.5 text-ink-subtle hover:bg-brand-soft hover:text-brand"
                       >
                         <KeyRound className="h-4 w-4" />
                       </button>
@@ -140,7 +140,7 @@ export default function UsersTable({
                         disabled={isPending && deletingId === user.id}
                         title="Remove user"
                         aria-label={`Remove ${user.name}`}
-                        className="rounded p-1.5 text-ink-subtle hover:bg-red-50 hover:text-red-700 disabled:opacity-50"
+                        className="rounded-sm p-1.5 text-ink-subtle hover:bg-red-50 hover:text-red-700 disabled:opacity-50"
                       >
                         <Trash2 className="h-4 w-4" />
                       </button>
