@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useState } from "react";
+import { useEffect, useId, useState } from "react";
 import {
   X,
   Package,
@@ -25,8 +25,15 @@ const historyDotStyles: Record<HistoryEventType, string> = {
   Moved: "bg-blue-500",
   Adjusted: "bg-amber-500",
   Restocked: "bg-purple-500",
-  Note: "bg-gray-400",
+  Note: "bg-slate-400",
 };
+
+const inputClass =
+  "w-full rounded-lg border border-line bg-surface px-3 py-1.5 text-sm text-ink shadow-sm focus:border-brand focus:outline-none focus:ring-2 focus:ring-brand/20";
+const saveButtonClass =
+  "rounded-lg bg-brand px-3 py-1.5 text-sm font-medium text-white shadow-sm hover:bg-brand-strong";
+const actionButtonClass =
+  "flex flex-col items-center gap-1 rounded-lg border border-line px-2 py-2 text-xs font-medium text-ink-muted transition-colors hover:bg-surface-muted aria-expanded:border-brand aria-expanded:bg-brand-soft aria-expanded:text-brand";
 
 export default function DetailPanel({ item, onClose, onUpdateQuantity, onAddNote }: DetailPanelProps) {
   const [editingQty, setEditingQty] = useState(false);
@@ -34,6 +41,8 @@ export default function DetailPanel({ item, onClose, onUpdateQuantity, onAddNote
   const [addingNote, setAddingNote] = useState(false);
   const [noteInput, setNoteInput] = useState("");
   const [showFullHistory, setShowFullHistory] = useState(false);
+  const qtyId = useId();
+  const noteId = useId();
 
   useEffect(() => {
     setEditingQty(false);
@@ -42,6 +51,18 @@ export default function DetailPanel({ item, onClose, onUpdateQuantity, onAddNote
     setNoteInput("");
     setQtyInput(item ? String(item.quantity) : "");
   }, [item?.id]);
+
+  // Non-modal panel: Esc closes it, unless Esc is meant for an open menu or dialog on top.
+  const isOpen = !!item;
+  useEffect(() => {
+    if (!isOpen) return;
+    function handleKey(e: KeyboardEvent) {
+      if (e.key !== "Escape" || document.querySelector(":popover-open, dialog[open]")) return;
+      onClose();
+    }
+    document.addEventListener("keydown", handleKey);
+    return () => document.removeEventListener("keydown", handleKey);
+  }, [isOpen, onClose]);
 
   if (!item) return null;
 
@@ -59,128 +80,109 @@ export default function DetailPanel({ item, onClose, onUpdateQuantity, onAddNote
 
   return (
     <>
-      <div className="fixed inset-0 z-20 bg-black/20 lg:hidden" onClick={onClose} />
-      <aside className="fixed inset-y-0 right-0 z-30 flex w-full max-w-sm flex-col border-l border-gray-200 bg-white shadow-xl">
-        <div className="flex items-center justify-between border-b border-gray-200 px-5 py-4">
-          <h2 className="text-base font-semibold text-gray-900">Item Details</h2>
+      <div aria-hidden="true" className="fixed inset-0 z-20 bg-slate-950/30 lg:hidden" onClick={onClose} />
+      <aside
+        aria-label="Item details"
+        className="fixed inset-y-0 right-0 z-30 flex w-full flex-col border-l border-line bg-surface shadow-2xl sm:max-w-md"
+      >
+        <div className="flex items-center justify-between border-b border-line px-5 py-4">
+          <h2 className="text-base font-semibold text-ink">Item Details</h2>
           <button
             type="button"
             onClick={onClose}
-            className="rounded p-1 text-gray-400 hover:bg-gray-100 hover:text-gray-600"
+            aria-label="Close item details"
+            className="-m-1 rounded-lg p-1.5 text-ink-subtle hover:bg-surface-muted hover:text-ink"
           >
-            <X className="h-5 w-5" />
+            <X className="h-5 w-5" aria-hidden="true" />
           </button>
         </div>
 
         <div className="flex-1 overflow-y-auto px-5 py-5">
-          <div className="mb-4 flex h-40 items-center justify-center rounded-xl bg-gray-100">
-            <Package className="h-12 w-12 text-gray-300" />
+          <div className="mb-5 flex items-start gap-4">
+            <div className="flex h-16 w-16 shrink-0 items-center justify-center rounded-xl bg-surface-muted ring-1 ring-inset ring-line">
+              <Package className="h-7 w-7 text-ink-subtle" aria-hidden="true" />
+            </div>
+            <div className="min-w-0 flex-1">
+              <h3 className="text-lg font-semibold leading-snug text-ink">{item.name}</h3>
+              <div className="mt-1 flex flex-wrap items-center gap-2">
+                <span className="font-mono text-xs text-ink-subtle">{item.itemNumber}</span>
+                <StatusBadge status={item.status} />
+              </div>
+            </div>
           </div>
 
-          <div className="mb-1 flex items-start justify-between gap-2">
-            <h3 className="text-lg font-semibold text-gray-900">{item.name}</h3>
-            <StatusBadge status={item.status} />
-          </div>
-          <p className="mb-4 text-sm text-gray-400">{item.itemNumber}</p>
-
-          <dl className="mb-6 grid grid-cols-2 gap-4 text-sm">
+          <dl className="mb-6 grid grid-cols-2 gap-x-4 gap-y-3 rounded-xl border border-line p-4 text-sm">
             <div>
-              <dt className="text-xs uppercase text-gray-400">SKU</dt>
-              <dd className="font-medium text-gray-700">{item.sku}</dd>
+              <dt className="text-xs text-ink-subtle">SKU</dt>
+              <dd className="font-mono text-xs font-medium text-ink">{item.sku}</dd>
             </div>
             <div>
-              <dt className="text-xs uppercase text-gray-400">Batch #</dt>
-              <dd className="font-medium text-gray-700">{item.batchNumber}</dd>
+              <dt className="text-xs text-ink-subtle">Batch #</dt>
+              <dd className="font-mono text-xs font-medium text-ink">{item.batchNumber}</dd>
             </div>
             <div>
-              <dt className="text-xs uppercase text-gray-400">Category</dt>
-              <dd className="font-medium text-gray-700">{item.category}</dd>
+              <dt className="text-xs text-ink-subtle">Category</dt>
+              <dd className="font-medium text-ink">{item.category}</dd>
             </div>
             <div>
-              <dt className="text-xs uppercase text-gray-400">Location</dt>
-              <dd className="flex items-center gap-1 font-medium text-gray-700">
-                <MapPin className="h-3.5 w-3.5 text-gray-400" />
+              <dt className="text-xs text-ink-subtle">Quantity</dt>
+              <dd className="font-medium tabular-nums text-ink">
+                {item.quantity} {item.unit}
+              </dd>
+            </div>
+            <div className="col-span-2">
+              <dt className="text-xs text-ink-subtle">Location</dt>
+              <dd className="flex items-center gap-1 font-medium text-ink">
+                <MapPin className="h-3.5 w-3.5 text-ink-subtle" aria-hidden="true" />
                 {item.location}
               </dd>
             </div>
-            <div>
-              <dt className="text-xs uppercase text-gray-400">Supplier</dt>
-              <dd className="flex items-center gap-1 font-medium text-gray-700">
-                <Building2 className="h-3.5 w-3.5 text-gray-400" />
+            <div className="col-span-2">
+              <dt className="text-xs text-ink-subtle">Supplier</dt>
+              <dd className="flex items-center gap-1 font-medium text-ink">
+                <Building2 className="h-3.5 w-3.5 text-ink-subtle" aria-hidden="true" />
                 {item.supplier}
-              </dd>
-            </div>
-            <div>
-              <dt className="text-xs uppercase text-gray-400">Quantity</dt>
-              <dd className="font-medium text-gray-700">
-                {item.quantity} {item.unit}
               </dd>
             </div>
           </dl>
 
           <div className="mb-6">
             <div className="mb-2 flex items-center justify-between text-sm">
-              <span className="font-medium text-gray-700">Stock Level</span>
-              <span className="text-gray-500">
+              <span className="font-medium text-ink">Stock Level</span>
+              <span className="tabular-nums text-ink-muted">
                 {item.quantity} / min {item.minThreshold} {item.unit}
               </span>
             </div>
-            <div className="relative h-2.5 w-full overflow-hidden rounded-full bg-gray-100">
+            <div className="relative h-2.5 w-full overflow-hidden rounded-full bg-surface-muted">
               <div
-                className={`h-full rounded-full ${barColor} transition-all`}
+                className={`h-full rounded-full ${barColor} transition-all motion-reduce:transition-none`}
                 style={{ width: `${qtyPercent}%` }}
               />
               <div
-                className="absolute top-0 h-full w-0.5 bg-gray-500"
+                className="absolute top-0 h-full w-0.5 bg-ink-muted"
                 style={{ left: `${thresholdPercent}%` }}
                 title="Minimum threshold"
               />
             </div>
-            <div className="mt-1 flex justify-between text-[11px] text-gray-400">
+            <div className="mt-1 flex justify-between text-[11px] tabular-nums text-ink-subtle">
               <span>0</span>
               <span>Threshold: {item.minThreshold}</span>
             </div>
           </div>
 
-          <div className="mb-4">
-            <div className="mb-3 flex items-center justify-between">
-              <span className="text-sm font-semibold text-gray-700">Activity History</span>
-              {item.history.length > 3 && (
-                <button
-                  type="button"
-                  onClick={() => setShowFullHistory((prev) => !prev)}
-                  className="text-xs font-medium text-blue-600 hover:underline"
-                >
-                  {showFullHistory ? "Show less" : "Show all"}
-                </button>
-              )}
-            </div>
-            <ol className="space-y-4 border-l border-gray-200 pl-4">
-              {visibleHistory.map((event) => (
-                <li key={event.id} className="relative">
-                  <span
-                    className={`absolute -left-[21px] top-1 h-3 w-3 rounded-full ring-4 ring-white ${historyDotStyles[event.type]}`}
-                  />
-                  <p className="text-sm font-medium text-gray-700">{event.type}</p>
-                  <p className="text-xs text-gray-500">{event.description}</p>
-                  <p className="mt-0.5 text-[11px] text-gray-400">
-                    {event.date} • {event.user}
-                  </p>
-                </li>
-              ))}
-            </ol>
-          </div>
-
           {editingQty && (
-            <div className="mb-4 rounded-lg border border-gray-200 bg-gray-50 p-3">
-              <label className="mb-1 block text-xs font-medium text-gray-500">New Quantity</label>
+            <div className="mb-6 rounded-xl border border-line bg-surface-muted/50 p-3">
+              <label htmlFor={qtyId} className="mb-1 block text-xs font-medium text-ink-muted">
+                New Quantity
+              </label>
               <div className="flex gap-2">
                 <input
+                  id={qtyId}
                   type="number"
                   min={0}
                   value={qtyInput}
                   onChange={(e) => setQtyInput(e.target.value)}
-                  className="w-full rounded-lg border border-gray-200 px-3 py-1.5 text-sm focus:border-blue-400 focus:outline-none focus:ring-2 focus:ring-blue-100"
+                  className={inputClass}
                 />
                 <button
                   type="button"
@@ -191,7 +193,7 @@ export default function DetailPanel({ item, onClose, onUpdateQuantity, onAddNote
                       setEditingQty(false);
                     }
                   }}
-                  className="rounded-lg bg-blue-600 px-3 py-1.5 text-sm font-medium text-white hover:bg-blue-700"
+                  className={saveButtonClass}
                 >
                   Save
                 </button>
@@ -200,13 +202,16 @@ export default function DetailPanel({ item, onClose, onUpdateQuantity, onAddNote
           )}
 
           {addingNote && (
-            <div className="mb-4 rounded-lg border border-gray-200 bg-gray-50 p-3">
-              <label className="mb-1 block text-xs font-medium text-gray-500">Note</label>
+            <div className="mb-6 rounded-xl border border-line bg-surface-muted/50 p-3">
+              <label htmlFor={noteId} className="mb-1 block text-xs font-medium text-ink-muted">
+                Note
+              </label>
               <textarea
+                id={noteId}
                 value={noteInput}
                 onChange={(e) => setNoteInput(e.target.value)}
                 rows={2}
-                className="w-full rounded-lg border border-gray-200 px-3 py-1.5 text-sm focus:border-blue-400 focus:outline-none focus:ring-2 focus:ring-blue-100"
+                className={inputClass}
               />
               <button
                 type="button"
@@ -217,24 +222,56 @@ export default function DetailPanel({ item, onClose, onUpdateQuantity, onAddNote
                     setAddingNote(false);
                   }
                 }}
-                className="mt-2 rounded-lg bg-blue-600 px-3 py-1.5 text-sm font-medium text-white hover:bg-blue-700"
+                className={`mt-2 ${saveButtonClass}`}
               >
                 Save Note
               </button>
             </div>
           )}
+
+          <div>
+            <div className="mb-3 flex items-center justify-between">
+              <h4 className="text-sm font-semibold text-ink">Activity History</h4>
+              {item.history.length > 3 && (
+                <button
+                  type="button"
+                  onClick={() => setShowFullHistory((prev) => !prev)}
+                  aria-expanded={showFullHistory}
+                  className="text-xs font-medium text-brand hover:underline"
+                >
+                  {showFullHistory ? "Show less" : "Show all"}
+                </button>
+              )}
+            </div>
+            <ol className="space-y-4 border-l border-line pl-4">
+              {visibleHistory.map((event) => (
+                <li key={event.id} className="relative">
+                  <span
+                    aria-hidden="true"
+                    className={`absolute -left-[21px] top-1 h-3 w-3 rounded-full ring-4 ring-surface ${historyDotStyles[event.type]}`}
+                  />
+                  <p className="text-sm font-medium text-ink">{event.type}</p>
+                  <p className="text-xs text-ink-muted">{event.description}</p>
+                  <p className="mt-0.5 text-[11px] text-ink-subtle">
+                    {event.date} • {event.user}
+                  </p>
+                </li>
+              ))}
+            </ol>
+          </div>
         </div>
 
-        <div className="grid grid-cols-3 gap-2 border-t border-gray-200 p-4">
+        <div className="grid grid-cols-3 gap-2 border-t border-line bg-surface-muted/40 p-4">
           <button
             type="button"
             onClick={() => {
               setEditingQty((prev) => !prev);
               setAddingNote(false);
             }}
-            className="flex flex-col items-center gap-1 rounded-lg border border-gray-200 px-2 py-2 text-xs font-medium text-gray-600 hover:bg-gray-50"
+            aria-expanded={editingQty}
+            className={actionButtonClass}
           >
-            <Boxes className="h-4 w-4" /> Update Qty
+            <Boxes className="h-4 w-4" aria-hidden="true" /> Update Qty
           </button>
           <button
             type="button"
@@ -242,16 +279,17 @@ export default function DetailPanel({ item, onClose, onUpdateQuantity, onAddNote
               setAddingNote((prev) => !prev);
               setEditingQty(false);
             }}
-            className="flex flex-col items-center gap-1 rounded-lg border border-gray-200 px-2 py-2 text-xs font-medium text-gray-600 hover:bg-gray-50"
+            aria-expanded={addingNote}
+            className={actionButtonClass}
           >
-            <StickyNote className="h-4 w-4" /> Add Note
+            <StickyNote className="h-4 w-4" aria-hidden="true" /> Add Note
           </button>
           <button
             type="button"
             onClick={() => setShowFullHistory(true)}
-            className="flex flex-col items-center gap-1 rounded-lg border border-gray-200 px-2 py-2 text-xs font-medium text-gray-600 hover:bg-gray-50"
+            className={actionButtonClass}
           >
-            <HistoryIcon className="h-4 w-4" /> View History
+            <HistoryIcon className="h-4 w-4" aria-hidden="true" /> View History
           </button>
         </div>
       </aside>

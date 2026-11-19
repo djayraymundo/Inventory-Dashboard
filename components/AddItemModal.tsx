@@ -1,8 +1,8 @@
 "use client";
 
 import { useEffect, useState } from "react";
-import { X } from "lucide-react";
 import { NewInventoryItem } from "@/lib/inventory-context";
+import Modal, { ModalBody, ModalFooter, modalButton, modalField } from "./Modal";
 
 interface AddItemModalProps {
   open: boolean;
@@ -36,8 +36,7 @@ const emptyForm: FormState = {
   supplier: "",
 };
 
-const fieldClass =
-  "w-full rounded-lg border border-gray-200 bg-gray-50 px-3 py-2 text-sm text-gray-700 focus:border-blue-400 focus:bg-white focus:outline-none focus:ring-2 focus:ring-blue-100";
+const fieldClass = modalField;
 
 export default function AddItemModal({
   open,
@@ -55,17 +54,6 @@ export default function AddItemModal({
       setError("");
     }
   }, [open]);
-
-  useEffect(() => {
-    if (!open) return;
-    function handleKey(e: KeyboardEvent) {
-      if (e.key === "Escape") onClose();
-    }
-    window.addEventListener("keydown", handleKey);
-    return () => window.removeEventListener("keydown", handleKey);
-  }, [open, onClose]);
-
-  if (!open) return null;
 
   function update<K extends keyof FormState>(key: K, value: FormState[K]) {
     setForm((prev) => ({ ...prev, [key]: value }));
@@ -104,27 +92,12 @@ export default function AddItemModal({
   }
 
   return (
-    <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/30 p-4" onClick={onClose}>
-      <form
-        onSubmit={handleSubmit}
-        onClick={(e) => e.stopPropagation()}
-        className="flex max-h-[90vh] w-full max-w-lg flex-col rounded-xl bg-white shadow-xl"
-      >
-        <div className="flex items-center justify-between border-b border-gray-200 px-5 py-4">
-          <h2 className="text-base font-semibold text-gray-900">Add Inventory Item</h2>
-          <button
-            type="button"
-            onClick={onClose}
-            className="rounded p-1 text-gray-400 hover:bg-gray-100 hover:text-gray-600"
-          >
-            <X className="h-5 w-5" />
-          </button>
-        </div>
-
-        <div className="grid flex-1 grid-cols-1 gap-4 overflow-y-auto px-5 py-5 sm:grid-cols-2">
+    <Modal open={open} onClose={onClose} title="Add Inventory Item">
+      <form onSubmit={handleSubmit} className="flex min-h-0 flex-1 flex-col">
+        <ModalBody className="grid grid-cols-1 gap-4 sm:grid-cols-2">
           <Field label="Item Name" required className="sm:col-span-2">
             <input
-              autoFocus
+              data-autofocus
               value={form.name}
               onChange={(e) => update("name", e.target.value)}
               placeholder="e.g. Wireless Barcode Scanner"
@@ -209,28 +182,21 @@ export default function AddItemModal({
               className={fieldClass}
             />
           </Field>
-        </div>
+        </ModalBody>
 
-        <div className="flex items-center justify-between gap-3 border-t border-gray-200 px-5 py-4">
-          <p className="text-sm text-red-600">{error}</p>
-          <div className="flex gap-2">
-            <button
-              type="button"
-              onClick={onClose}
-              className="rounded-lg border border-gray-200 px-4 py-2 text-sm font-medium text-gray-600 hover:bg-gray-50"
-            >
-              Cancel
-            </button>
-            <button
-              type="submit"
-              className="rounded-lg bg-blue-600 px-4 py-2 text-sm font-medium text-white hover:bg-blue-700"
-            >
-              Add Item
-            </button>
-          </div>
-        </div>
+        <ModalFooter>
+          <p role="alert" className="mr-auto text-sm text-red-700">
+            {error}
+          </p>
+          <button type="button" onClick={onClose} className={modalButton.secondary}>
+            Cancel
+          </button>
+          <button type="submit" className={modalButton.primary}>
+            Add Item
+          </button>
+        </ModalFooter>
       </form>
-    </div>
+    </Modal>
   );
 }
 
@@ -247,7 +213,7 @@ function Field({
 }) {
   return (
     <label className={`block ${className}`}>
-      <span className="mb-1 block text-xs font-medium text-gray-500">
+      <span className="mb-1 block text-xs font-medium text-ink-muted">
         {label}
         {required && <span className="text-red-500"> *</span>}
       </span>

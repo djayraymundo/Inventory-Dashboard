@@ -26,6 +26,17 @@ body {
   background: rgb(var(--canvas));
 }
 
+/* Modal dialogs: keep scroll gestures from reaching the page behind (no body overflow lock). */
+dialog.modal:modal {
+  overscroll-behavior: contain;
+}
+dialog.modal::backdrop {
+  background: rgb(2 6 23 / 0.45);
+  backdrop-filter: blur(2px);
+  overflow: hidden;
+  overscroll-behavior: contain;
+}
+
 /* Row action menu: popover tethered to its trigger, flipping above near the viewport bottom.
    Browsers without anchor positioning get top/left from InventoryTable's fallback. */
 .row-menu {

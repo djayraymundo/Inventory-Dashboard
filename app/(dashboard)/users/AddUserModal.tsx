@@ -2,21 +2,15 @@
 
 import { useEffect, useRef } from "react";
 import { useFormState, useFormStatus } from "react-dom";
-import { Loader2, X } from "lucide-react";
+import { Loader2 } from "lucide-react";
+import Modal, { ModalBody, ModalFooter, modalButton, modalField } from "@/components/Modal";
 import { createUser } from "./actions";
-
-const fieldClass =
-  "w-full rounded-lg border border-gray-200 bg-gray-50 px-3 py-2 text-sm text-gray-700 focus:border-blue-400 focus:bg-white focus:outline-none focus:ring-2 focus:ring-blue-100";
 
 function SubmitButton() {
   const { pending } = useFormStatus();
   return (
-    <button
-      type="submit"
-      disabled={pending}
-      className="flex items-center gap-2 rounded-lg bg-blue-600 px-4 py-2 text-sm font-medium text-white hover:bg-blue-700 disabled:opacity-70"
-    >
-      {pending && <Loader2 className="h-4 w-4 animate-spin" />}
+    <button type="submit" disabled={pending} className={modalButton.primary}>
+      {pending && <Loader2 className="h-4 w-4 animate-spin" aria-hidden="true" />}
       {pending ? "Creating..." : "Create Account"}
     </button>
   );
@@ -30,39 +24,19 @@ export default function AddUserModal({ open, onClose }: { open: boolean; onClose
     if (state.success) formRef.current?.reset();
   }, [state]);
 
-  useEffect(() => {
-    if (!open) return;
-    function handleKey(e: KeyboardEvent) {
-      if (e.key === "Escape") onClose();
-    }
-    window.addEventListener("keydown", handleKey);
-    return () => window.removeEventListener("keydown", handleKey);
-  }, [open, onClose]);
-
-  if (!open) return null;
-
   return (
-    <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/30 p-4" onClick={onClose}>
-      <form
-        ref={formRef}
-        action={formAction}
-        onClick={(e) => e.stopPropagation()}
-        className="flex w-full max-w-md flex-col rounded-xl bg-white shadow-xl"
-      >
-        <div className="flex items-center justify-between border-b border-gray-200 px-5 py-4">
-          <h2 className="text-base font-semibold text-gray-900">Add User</h2>
-          <button
-            type="button"
-            onClick={onClose}
-            className="rounded p-1 text-gray-400 hover:bg-gray-100 hover:text-gray-600"
-          >
-            <X className="h-5 w-5" />
-          </button>
-        </div>
-
-        <div className="space-y-4 px-5 py-5">
+    <Modal open={open} onClose={onClose} title="Add User" size="md">
+      <form ref={formRef} action={formAction} className="flex min-h-0 flex-1 flex-col">
+        <ModalBody className="space-y-4">
           <Field label="Full Name">
-            <input name="fullName" required autoFocus placeholder="e.g. Maria Santos" className={fieldClass} />
+            <input
+              name="fullName"
+              required
+              data-autofocus
+              autoComplete="off"
+              placeholder="e.g. Maria Santos"
+              className={modalField}
+            />
           </Field>
           <Field label="Email">
             <input
@@ -70,11 +44,13 @@ export default function AddUserModal({ open, onClose }: { open: boolean; onClose
               type="email"
               required
               autoComplete="off"
+              autoCapitalize="none"
+              spellCheck={false}
               placeholder="staff@company.com"
-              className={fieldClass}
+              className={modalField}
             />
           </Field>
-          <Field label="Temporary Password">
+          <Field label="Temporary Password" hint="Ibigay ito nang personal sa staff. Makikita mo ito habang tina-type.">
             <input
               name="password"
               type="text"
@@ -82,54 +58,48 @@ export default function AddUserModal({ open, onClose }: { open: boolean; onClose
               minLength={8}
               autoComplete="new-password"
               placeholder="At least 8 characters"
-              className={fieldClass}
+              className={modalField}
             />
-            <span className="mt-1 block text-xs text-gray-400">
-              Ibigay ito nang personal sa staff. Makikita mo ito habang tina-type.
-            </span>
           </Field>
           <Field label="Role">
-            <select name="role" defaultValue="Staff" className={fieldClass}>
+            <select name="role" defaultValue="Staff" className={modalField}>
               <option value="Staff">Staff: inventory lang</option>
               <option value="Administrator">Administrator: pati pag-manage ng users</option>
             </select>
           </Field>
 
           {state.error && (
-            <p role="alert" className="rounded-lg bg-red-50 px-3 py-2 text-sm text-red-600">
+            <p role="alert" className="rounded-lg bg-red-50 px-3 py-2 text-sm text-red-700">
               {state.error}
             </p>
           )}
           {state.success && (
-            <p role="status" className="rounded-lg bg-green-50 px-3 py-2 text-sm text-green-700">
+            <p role="status" className="rounded-lg bg-emerald-50 px-3 py-2 text-sm text-emerald-800">
               {state.success}
             </p>
           )}
-        </div>
+        </ModalBody>
 
-        <div className="flex justify-end gap-2 border-t border-gray-200 px-5 py-4">
-          <button
-            type="button"
-            onClick={onClose}
-            className="rounded-lg border border-gray-200 px-4 py-2 text-sm font-medium text-gray-600 hover:bg-gray-50"
-          >
+        <ModalFooter>
+          <button type="button" onClick={onClose} className={modalButton.secondary}>
             Close
           </button>
           <SubmitButton />
-        </div>
+        </ModalFooter>
       </form>
-    </div>
+    </Modal>
   );
 }
 
-function Field({ label, children }: { label: string; children: React.ReactNode }) {
+function Field({ label, hint, children }: { label: string; hint?: string; children: React.ReactNode }) {
   return (
     <label className="block">
-      <span className="mb-1 block text-xs font-medium text-gray-500">
+      <span className="mb-1 block text-xs font-medium text-ink-muted">
         {label}
-        <span className="text-red-500"> *</span>
+        <span className="text-red-600"> *</span>
       </span>
       {children}
+      {hint && <span className="mt-1 block text-xs text-ink-subtle">{hint}</span>}
     </label>
   );
 }
