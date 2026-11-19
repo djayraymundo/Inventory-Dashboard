@@ -2,11 +2,11 @@
 
 import { useFormState, useFormStatus } from "react-dom";
 import { Loader2, UserRound } from "lucide-react";
+import { modalField } from "@/components/Modal";
 import { updateProfile } from "./actions";
 
-const fieldClass =
-  "w-full rounded-lg border border-gray-200 bg-gray-50 px-3 py-2 text-sm text-gray-700 focus:border-blue-400 focus:bg-white focus:outline-none focus:ring-2 focus:ring-blue-100";
-const readOnlyClass = "w-full rounded-lg border border-gray-100 bg-gray-100 px-3 py-2 text-sm text-gray-500";
+const fieldClass = modalField;
+const readOnlyClass = "w-full rounded-lg border border-line bg-surface-muted px-3 py-2 text-sm text-ink-muted";
 
 function SubmitButton() {
   const { pending } = useFormStatus();
@@ -14,7 +14,7 @@ function SubmitButton() {
     <button
       type="submit"
       disabled={pending}
-      className="flex items-center gap-2 rounded-lg bg-blue-600 px-4 py-2 text-sm font-medium text-white hover:bg-blue-700 disabled:opacity-70"
+      className="flex items-center gap-2 rounded-lg bg-brand px-4 py-2 text-sm font-medium text-white hover:bg-brand-strong disabled:opacity-70"
     >
       {pending && <Loader2 className="h-4 w-4 animate-spin" />}
       {pending ? "Saving..." : "Save Changes"}
@@ -34,14 +34,14 @@ export default function ProfileForm({ email, role, fullName, phone, address }: P
   const [state, formAction] = useFormState(updateProfile, {});
 
   return (
-    <form action={formAction} className="rounded-xl border border-gray-200 bg-white shadow-sm">
-      <div className="flex items-center gap-3 border-b border-gray-200 px-5 py-4">
-        <div className="flex h-9 w-9 items-center justify-center rounded-lg bg-blue-50 text-blue-600">
+    <form action={formAction} className="rounded-xl border border-line bg-surface shadow-sm">
+      <div className="flex items-center gap-3 border-b border-line px-5 py-4">
+        <div className="flex h-9 w-9 items-center justify-center rounded-lg bg-brand-soft text-brand">
           <UserRound className="h-5 w-5" />
         </div>
         <div>
-          <h2 className="text-base font-semibold text-gray-900">Profile</h2>
-          <p className="text-xs text-gray-500">Ang pangalan mo ang lalabas sa itaas at sa item history.</p>
+          <h2 className="text-base font-semibold text-ink">Profile</h2>
+          <p className="text-xs text-ink-muted">Ang pangalan mo ang lalabas sa itaas at sa item history.</p>
         </div>
       </div>
 
@@ -77,19 +77,19 @@ export default function ProfileForm({ email, role, fullName, phone, address }: P
         </Field>
 
         {state.error && (
-          <p role="alert" className="rounded-lg bg-red-50 px-3 py-2 text-sm text-red-600 sm:col-span-2">
+          <p role="alert" className="rounded-lg bg-red-50 px-3 py-2 text-sm text-red-700 sm:col-span-2">
             {state.error}
           </p>
         )}
         {state.success && (
-          <p role="status" className="rounded-lg bg-green-50 px-3 py-2 text-sm text-green-700 sm:col-span-2">
+          <p role="status" className="rounded-lg bg-emerald-50 px-3 py-2 text-sm text-emerald-800 sm:col-span-2">
             {state.success}
           </p>
         )}
       </div>
 
-      <div className="flex items-center justify-between gap-3 border-t border-gray-200 px-5 py-4">
-        <p className="text-xs text-gray-400">Ang email at role ay pinapalitan lang ng admin.</p>
+      <div className="flex items-center justify-between gap-3 border-t border-line px-5 py-4">
+        <p className="text-xs text-ink-subtle">Ang email at role ay pinapalitan lang ng admin.</p>
         <SubmitButton />
       </div>
     </form>
@@ -109,9 +109,9 @@ function Field({
 }) {
   return (
     <label className={`block ${className}`}>
-      <span className="mb-1 block text-xs font-medium text-gray-500">
+      <span className="mb-1 block text-xs font-medium text-ink-muted">
         {label}
-        {required && <span className="text-red-500"> *</span>}
+        {required && <span className="text-red-600"> *</span>}
       </span>
       {children}
     </label>

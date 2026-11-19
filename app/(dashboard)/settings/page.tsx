@@ -26,7 +26,7 @@ export default async function SettingsPage() {
   return (
     <>
       <TopBar />
-      <main className="flex-1 overflow-y-auto p-6">
+      <main className="flex-1 overflow-y-auto p-4 sm:p-6">
         <PageHeader title="Settings" description="I-manage ang account at personal details mo." />
 
         <div className="grid grid-cols-1 items-start gap-6 lg:grid-cols-3">

@@ -3,6 +3,7 @@
 import { useState } from "react";
 import { useFormState, useFormStatus } from "react-dom";
 import { Eye, EyeOff, Loader2, LogIn } from "lucide-react";
+import { modalField } from "@/components/Modal";
 import { login } from "./actions";
 
 function SubmitButton() {
@@ -11,7 +12,7 @@ function SubmitButton() {
     <button
       type="submit"
       disabled={pending}
-      className="flex w-full items-center justify-center gap-2 rounded-lg bg-blue-600 px-4 py-2.5 text-sm font-semibold text-white hover:bg-blue-700 disabled:cursor-not-allowed disabled:opacity-70"
+      className="flex w-full items-center justify-center gap-2 rounded-lg bg-brand px-4 py-2.5 text-sm font-semibold text-white hover:bg-brand-strong disabled:cursor-not-allowed disabled:opacity-70"
     >
       {pending ? <Loader2 className="h-4 w-4 animate-spin" /> : <LogIn className="h-4 w-4" />}
       {pending ? "Signing in..." : "Sign in"}
@@ -19,8 +20,7 @@ function SubmitButton() {
   );
 }
 
-const inputClass =
-  "w-full rounded-lg border border-gray-200 bg-gray-50 px-3 py-2 text-sm text-gray-700 placeholder:text-gray-400 focus:border-blue-400 focus:bg-white focus:outline-none focus:ring-2 focus:ring-blue-100";
+const inputClass = modalField;
 
 export default function LoginForm({ from }: { from: string }) {
   const [state, formAction] = useFormState(login, {});
@@ -31,7 +31,7 @@ export default function LoginForm({ from }: { from: string }) {
       <input type="hidden" name="from" value={from} />
 
       <div className="space-y-1.5">
-        <label htmlFor="email" className="text-sm font-medium text-gray-700">
+        <label htmlFor="email" className="text-sm font-medium text-ink">
           Email
         </label>
         <input
@@ -39,6 +39,8 @@ export default function LoginForm({ from }: { from: string }) {
           name="email"
           type="email"
           autoComplete="username"
+          autoCapitalize="none"
+          spellCheck={false}
           required
           placeholder="you@company.com"
           className={inputClass}
@@ -46,7 +48,7 @@ export default function LoginForm({ from }: { from: string }) {
       </div>
 
       <div className="space-y-1.5">
-        <label htmlFor="password" className="text-sm font-medium text-gray-700">
+        <label htmlFor="password" className="text-sm font-medium text-ink">
           Password
         </label>
         <div className="relative">
@@ -62,16 +64,17 @@ export default function LoginForm({ from }: { from: string }) {
           <button
             type="button"
             onClick={() => setShowPassword((v) => !v)}
-            aria-label={showPassword ? "Hide password" : "Show password"}
-            className="absolute right-2 top-1/2 -translate-y-1/2 rounded p-1 text-gray-400 hover:text-gray-600"
+            aria-label="Show password"
+            aria-pressed={showPassword}
+            className="absolute right-2 top-1/2 -translate-y-1/2 rounded p-1 text-ink-subtle hover:text-ink"
           >
-            {showPassword ? <EyeOff className="h-4 w-4" /> : <Eye className="h-4 w-4" />}
+            {showPassword ? <EyeOff className="h-4 w-4" aria-hidden="true" /> : <Eye className="h-4 w-4" aria-hidden="true" />}
           </button>
         </div>
       </div>
 
       {state.error && (
-        <p role="alert" className="rounded-lg bg-red-50 px-3 py-2 text-sm text-red-600">
+        <p role="alert" className="rounded-lg bg-red-50 px-3 py-2 text-sm text-red-700">
           {state.error}
         </p>
       )}

@@ -51,14 +51,14 @@ export default async function UsersPage() {
   return (
     <>
       <TopBar />
-      <main className="flex-1 overflow-y-auto p-6">
+      <main className="flex-1 overflow-y-auto p-4 sm:p-6">
         <PageHeader
           title="Users"
           description="Gumawa at mag-manage ng mga account na pwedeng mag-login sa system."
         />
 
         {loadError ? (
-          <p role="alert" className="rounded-xl bg-red-50 px-4 py-3 text-sm text-red-600">
+          <p role="alert" className="rounded-xl bg-red-50 px-4 py-3 text-sm text-red-700">
             {loadError}
           </p>
         ) : (
