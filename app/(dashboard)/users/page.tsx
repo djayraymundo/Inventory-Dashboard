@@ -1,6 +1,6 @@
 import { redirect } from "next/navigation";
-import { UsersRound } from "lucide-react";
 import TopBar from "@/components/TopBar";
+import PageHeader from "@/components/PageHeader";
 import { createAdminClient, getAdminUser } from "@/lib/supabase/admin";
 import UsersTable, { UserRow } from "./UsersTable";
 
@@ -52,17 +52,10 @@ export default async function UsersPage() {
     <>
       <TopBar />
       <main className="flex-1 overflow-y-auto p-6">
-        <div className="mb-6 flex items-center gap-3">
-          <div className="flex h-11 w-11 items-center justify-center rounded-xl bg-blue-50 text-blue-600">
-            <UsersRound className="h-6 w-6" />
-          </div>
-          <div>
-            <h1 className="text-2xl font-semibold text-gray-900">Users</h1>
-            <p className="text-sm text-gray-500">
-              Gumawa at mag-manage ng mga account na pwedeng mag-login sa system.
-            </p>
-          </div>
-        </div>
+        <PageHeader
+          title="Users"
+          description="Gumawa at mag-manage ng mga account na pwedeng mag-login sa system."
+        />
 
         {loadError ? (
           <p role="alert" className="rounded-xl bg-red-50 px-4 py-3 text-sm text-red-600">

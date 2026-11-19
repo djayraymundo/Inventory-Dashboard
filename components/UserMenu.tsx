@@ -17,7 +17,10 @@ export default function UserMenu() {
       if (!menuRef.current?.contains(e.target as Node)) setOpen(false);
     }
     function handleKey(e: KeyboardEvent) {
-      if (e.key === "Escape") setOpen(false);
+      if (e.key === "Escape") {
+        setOpen(false);
+        menuRef.current?.querySelector("button")?.focus(); // back to the trigger
+      }
     }
     document.addEventListener("mousedown", handleClick);
     window.addEventListener("keydown", handleKey);
@@ -28,46 +31,43 @@ export default function UserMenu() {
   }, [open]);
 
   return (
-    <div ref={menuRef} className="relative border-l border-gray-200 pl-4">
+    <div ref={menuRef} className="relative border-l border-line pl-4">
       <button
         type="button"
         onClick={() => setOpen((v) => !v)}
-        aria-haspopup="menu"
         aria-expanded={open}
-        className="flex items-center gap-3 rounded-lg p-1 pr-2 hover:bg-gray-100"
+        aria-label={`Account menu: ${user.name}`}
+        className="flex items-center gap-3 rounded-lg p-1 pr-2 hover:bg-surface-muted"
       >
-        <div className="flex h-9 w-9 items-center justify-center rounded-full bg-blue-600 text-sm font-semibold text-white">
+        <div className="flex h-9 w-9 items-center justify-center rounded-full bg-brand text-sm font-semibold text-white">
           {user.initials}
         </div>
         <div className="hidden text-left sm:block">
-          <p className="text-sm font-semibold text-gray-800">{user.name}</p>
-          <p className="text-xs text-gray-500">{user.role}</p>
+          <p className="text-sm font-semibold text-ink">{user.name}</p>
+          <p className="text-xs text-ink-muted">{user.role}</p>
         </div>
-        <ChevronDown className={`h-4 w-4 text-gray-400 transition-transform ${open ? "rotate-180" : ""}`} />
+        <ChevronDown className={`h-4 w-4 text-ink-subtle transition-transform ${open ? "rotate-180" : ""}`} />
       </button>
 
       {open && (
         <div
-          role="menu"
-          className="absolute right-0 top-full z-30 mt-2 w-60 overflow-hidden rounded-xl border border-gray-200 bg-white shadow-lg"
+          className="absolute right-0 top-full z-30 mt-2 w-60 overflow-hidden rounded-xl border border-line bg-surface shadow-lg"
         >
-          <div className="border-b border-gray-100 px-4 py-3">
-            <p className="truncate text-sm font-semibold text-gray-900">{user.name}</p>
-            <p className="truncate text-xs text-gray-500">{user.email}</p>
+          <div className="border-b border-line px-4 py-3">
+            <p className="truncate text-sm font-semibold text-ink">{user.name}</p>
+            <p className="truncate text-xs text-ink-muted">{user.email}</p>
           </div>
           <Link
             href="/settings"
-            role="menuitem"
             onClick={() => setOpen(false)}
-            className="flex items-center gap-3 px-4 py-2.5 text-sm text-gray-700 hover:bg-gray-50"
+            className="flex items-center gap-3 px-4 py-2.5 text-sm text-ink hover:bg-surface-muted"
           >
-            <Settings className="h-4 w-4 text-gray-400" />
+            <Settings className="h-4 w-4 text-ink-subtle" />
             View Settings
           </Link>
-          <form action={logout} className="border-t border-gray-100">
+          <form action={logout} className="border-t border-line">
             <button
               type="submit"
-              role="menuitem"
               className="flex w-full items-center gap-3 px-4 py-2.5 text-sm text-red-600 hover:bg-red-50"
             >
               <LogOut className="h-4 w-4" />

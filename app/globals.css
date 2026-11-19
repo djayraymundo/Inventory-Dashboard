@@ -3,11 +3,25 @@
 @tailwind utilities;
 
 :root {
-  --background: #f8fafc;
-  --foreground: #0f172a;
+  /* Light only for now; switch to "light dark" when dark tokens are added (Phase 5). */
+  color-scheme: light;
+
+  /* RGB channels, used by tailwind.config.ts tokens (e.g. bg-surface, text-ink-muted). */
+  --canvas: 248 250 252; /* slate-50: page background */
+  --surface: 255 255 255; /* cards, bars, panels */
+  --surface-muted: 241 245 249; /* slate-100: hover, table headers */
+  --line: 226 232 240; /* slate-200: borders and dividers */
+  --ink: 15 23 42; /* slate-900: primary text */
+  --ink-muted: 71 85 105; /* slate-600: secondary text, 7.6:1 on white */
+  --ink-subtle: 100 116 139; /* slate-500: meta text, 4.8:1 on white (AA) */
+  --brand: 37 99 235; /* blue-600 */
+  --brand-strong: 29 78 216; /* blue-700: hover */
+  --brand-soft: 239 246 255; /* blue-50: tinted backgrounds */
+
+  accent-color: rgb(var(--brand));
 }
 
 body {
-  color: var(--foreground);
-  background: var(--background);
+  color: rgb(var(--ink));
+  background: rgb(var(--canvas));
 }

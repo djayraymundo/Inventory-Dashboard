@@ -1,7 +1,7 @@
 "use client";
 
-import { AlertTriangle } from "lucide-react";
 import TopBar from "@/components/TopBar";
+import PageHeader from "@/components/PageHeader";
 import StatusBadge from "@/components/StatusBadge";
 import { useInventory } from "@/lib/inventory-context";
 
@@ -15,17 +15,10 @@ export default function LowStockPage() {
     <>
       <TopBar />
       <main className="flex-1 overflow-y-auto p-6">
-        <div className="mb-6 flex items-center gap-3">
-          <div className="flex h-11 w-11 items-center justify-center rounded-xl bg-amber-50 text-amber-600">
-            <AlertTriangle className="h-6 w-6" />
-          </div>
-          <div>
-            <h1 className="text-2xl font-semibold text-gray-900">Low Stock</h1>
-            <p className="text-sm text-gray-500">
-              {lowStockItems.length} items ang nangangailangan ng restock ngayon.
-            </p>
-          </div>
-        </div>
+        <PageHeader
+          title="Low Stock"
+          description={`${lowStockItems.length} items ang nangangailangan ng restock ngayon.`}
+        />
 
         <div className="overflow-x-auto rounded-xl border border-gray-200 bg-white shadow-sm">
           <table className="w-full min-w-[700px] text-left text-sm">

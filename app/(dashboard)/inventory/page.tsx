@@ -3,6 +3,7 @@
 import { useMemo, useState } from "react";
 import { Plus } from "lucide-react";
 import TopBar from "@/components/TopBar";
+import PageHeader from "@/components/PageHeader";
 import InventoryTable from "@/components/InventoryTable";
 import Pagination from "@/components/Pagination";
 import DetailPanel from "@/components/DetailPanel";
@@ -84,22 +85,20 @@ export default function InventoryPage() {
     <>
       <TopBar onSearch={handleSearch} />
       <main className="flex-1 overflow-y-auto p-6">
-        <div className="mb-6 flex flex-wrap items-end justify-between gap-4">
-          <div>
-            <h1 className="text-2xl font-semibold text-gray-900">Inventory</h1>
-            <p className="mt-1 text-sm text-gray-500">
-              Kumpletong listahan ng lahat ng items ({items.length} total).
-            </p>
-          </div>
-          <button
-            type="button"
-            onClick={() => setAddOpen(true)}
-            className="flex h-9 items-center gap-2 rounded-lg bg-blue-600 px-4 text-sm font-medium text-white transition-colors hover:bg-blue-700"
-          >
-            <Plus className="h-4 w-4" />
-            Add Item
-          </button>
-        </div>
+        <PageHeader
+          title="Inventory"
+          description={`Kumpletong listahan ng lahat ng items (${items.length} total).`}
+          actions={
+            <button
+              type="button"
+              onClick={() => setAddOpen(true)}
+              className="flex h-9 items-center gap-2 rounded-lg bg-brand px-4 text-sm font-medium text-white shadow-sm transition-colors hover:bg-brand-strong"
+            >
+              <Plus className="h-4 w-4" />
+              Add Item
+            </button>
+          }
+        />
 
         <InventoryTable
           items={paginatedItems}

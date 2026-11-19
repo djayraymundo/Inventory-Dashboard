@@ -1,5 +1,5 @@
 import { redirect } from "next/navigation";
-import Sidebar from "@/components/Sidebar";
+import AppShell from "@/components/AppShell";
 import { fetchInventory } from "@/lib/inventory-db";
 import { InventoryProvider } from "@/lib/inventory-context";
 import { SessionProvider, SessionUser } from "@/lib/session-context";
@@ -54,17 +54,14 @@ export default async function DashboardLayout({ children }: { children: React.Re
   return (
     <SessionProvider user={sessionUser}>
       <InventoryProvider initialItems={items}>
-        <div className="flex min-h-screen">
-          <Sidebar />
-          <div className="flex min-h-screen flex-1 flex-col lg:ml-64">
-            {loadError && (
-              <p role="alert" className="bg-red-50 px-6 py-2 text-sm text-red-600">
-                {loadError}
-              </p>
-            )}
-            {children}
-          </div>
-        </div>
+        <AppShell>
+          {loadError && (
+            <p role="alert" className="bg-red-50 px-6 py-2 text-sm text-red-700">
+              {loadError}
+            </p>
+          )}
+          {children}
+        </AppShell>
       </InventoryProvider>
     </SessionProvider>
   );

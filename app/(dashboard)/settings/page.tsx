@@ -1,6 +1,6 @@
 import { redirect } from "next/navigation";
-import { Settings } from "lucide-react";
 import TopBar from "@/components/TopBar";
+import PageHeader from "@/components/PageHeader";
 import { createClient } from "@/lib/supabase/server";
 import ProfileCard from "./ProfileCard";
 import ProfileForm from "./ProfileForm";
@@ -27,15 +27,7 @@ export default async function SettingsPage() {
     <>
       <TopBar />
       <main className="flex-1 overflow-y-auto p-6">
-        <div className="mb-6 flex items-center gap-3">
-          <div className="flex h-11 w-11 items-center justify-center rounded-xl bg-gray-100 text-gray-600">
-            <Settings className="h-6 w-6" />
-          </div>
-          <div>
-            <h1 className="text-2xl font-semibold text-gray-900">Settings</h1>
-            <p className="text-sm text-gray-500">I-manage ang account at personal details mo.</p>
-          </div>
-        </div>
+        <PageHeader title="Settings" description="I-manage ang account at personal details mo." />
 
         <div className="grid grid-cols-1 items-start gap-6 lg:grid-cols-3">
           <div className="space-y-6">
